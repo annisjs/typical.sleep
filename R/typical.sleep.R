@@ -32,7 +32,7 @@ typical.sleep <- function(sleep_data)
 
   # all_sleep_dat now only contains relevant sleep logs from the MSP.
   # The next step is to estimate the median bedtime and waketime from relevant sleeps. 
-  first_last_asleep <- all_sleep_dat[ level != "awake" & level != "wake" & level != "restless",
+  first_last_asleep <- all_sleep_dat[ level != "awake" & level != "wake" & level != "restless" & msp == TRUE,
                                     .(start_time = start_time[1],
                                       end_time = end_time[.N]),
                                     .(person_id,date_new)]
