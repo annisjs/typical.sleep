@@ -3,7 +3,9 @@ An R package to compute the typical sleep period from Fitbit sleep segment data.
 Can be used in the All of Us Researcher's Workbench or from a direct export from Fitbit.
 
 # Installation
+```r
 devtools::install_github("annisjs/typical.sleep",updrade=F)
+```
 
 # Usage
 ```r
