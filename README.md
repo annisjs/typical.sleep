@@ -31,7 +31,7 @@ dat <- typical.sleep(dat)
 tsp_metrics <- compute_sleep_metrics(dat[is_typical_sleep == TRUE])
 ```
 
-The package can also handle direct exports from Fitbit: [text](https://support.google.com/fitbit/answer/14236615?hl=en#zippy=%2Chow-do-i-export-my-fitbit-data).
+The package can also handle direct exports from Fitbit: [How do I export my Fitbit data?](https://support.google.com/fitbit/answer/14236615?hl=en#zippy=%2Chow-do-i-export-my-fitbit-data).
 ```r
 json_test_data <- parse_fitbit_json("sleep-2023-03-14.json")
 dat <- typical.sleep(json_test_data)
