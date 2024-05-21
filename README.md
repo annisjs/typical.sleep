@@ -1,11 +1,14 @@
 # typical.sleep
-An R package 
+An R package to compute the typical sleep period from Fitbit sleep segment data. 
+Can be used in the All of Us Researcher's Workbench or from a direct export from Fitbit.
 
 # Installation
 devtools::install_github("annisjs/typical.sleep",updrade=F)
 
 # Usage
+```r
 library(typical.sleep)
+```
 
 Data is assumed to be in the format provided by the sleep_levels table in the All of Us Researcher's Workbench.
 The table has the following columns: person_id, sleep_date, start_datetime, is_main_sleep, level, duration.
