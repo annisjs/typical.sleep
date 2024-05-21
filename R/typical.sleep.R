@@ -19,8 +19,8 @@ typical.sleep <- function(sleep_data)
   setnames(sleep_data,"start_time","start_datetime")
   setnames(sleep_data,"duration","duration_in_min")
   setnames(sleep_data,"date","sleep_date")
-  setnames(sleep_data,"date_new","sleep_date_new")
-  sleep_data <- sleep_data[,c("person_id","sleep_date","start_datetime","level","duration_in_min","is_main_sleep","sleep_date_new","tsp")]
+  setnames(sleep_data,"date_new","typical_sleep_date")
+  sleep_data <- sleep_data[,c("person_id","sleep_date","start_datetime","level","duration_in_min","is_main_sleep","typical_sleep_date","is_typical_sleep")]
   return(sleep_data)
 }
 
@@ -87,8 +87,8 @@ typical.sleep <- function(sleep_data)
   dt_overlaps <- rbind(dt_overlaps,dt_overlaps2)
   dt_overlaps <- dt_overlaps[!duplicated(dt_overlaps[,c("xid")])]
 
-  all_sleep_dat[, tsp := FALSE]
-  all_sleep_dat[dt_overlaps$xid, tsp := TRUE]
+  all_sleep_dat[, is_typical_sleep := FALSE]
+  all_sleep_dat[dt_overlaps$xid, is_typical_sleep := TRUE]
   setkey(all_sleep_dat,person_id,start_time)
   return(all_sleep_dat)
 }
