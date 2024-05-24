@@ -3,21 +3,19 @@
 #' person_id, sleep_date, start_datetime, levels, duration_in_min, and is_main_sleep.
 prepare_data <- function(all_sleep_dat)
 {
-    setnames(all_sleep_dat,"start_datetime","start_time")
-    setnames(all_sleep_dat,"duration_in_min","duration")
     setnames(all_sleep_dat,"sleep_date","date")
-    all_sleep_dat[, end_time := start_time + lubridate::seconds(duration * 60)]
-
+    all_sleep_dat[, end_time := start_datetime + lubridate::seconds(duration_in_min * 60)]
     # If the end time overlaps the next start time, clip it and adjust the duration and start time.
     # This is rare. 
-    setkey(all_sleep_dat, person_id, start_time, end_time)
-    all_sleep_dat[,start_time_lag := shift(start_time,-1),.(person_id)]
-    all_sleep_dat[end_time > start_time_lag, duration := as.numeric(start_time_lag - start_time) /60]
+    setkey(all_sleep_dat, person_id, start_datetime, end_time)
+    all_sleep_dat[,start_time_lag := shift(start_datetime,-1),.(person_id)]
+    all_sleep_dat[end_time > start_time_lag, duration_in_min := as.numeric(start_time_lag - start_datetime) /60]
     all_sleep_dat[end_time > start_time_lag, end_time := start_time_lag]
-
-    # Additional help variables that will be used later to compute the MSP
-    setkey(all_sleep_dat, person_id, start_time, end_time)
-    all_sleep_dat[, sleep_start_new := center(time_to_minute(start_time))]
-    all_sleep_dat[, sleep_end_new := center(time_to_minute(end_time))]
+    # Find sleep logs
+    all_sleep_dat[, end_datetime_lead := shift(end_time,1),.(person_id)]
+    all_sleep_dat[, diff := as.numeric(start_datetime - end_datetime_lead) / 60,.(person_id)]
+    all_sleep_dat[, sleep_log := cumsum(diff >= 1 | is.na(diff))]
+    all_sleep_dat <- all_sleep_dat[, start_datetime_log := start_datetime[1],.(person_id,sleep_log)]
+    all_sleep_dat <- all_sleep_dat[, end_time_log := end_time[.N],.(person_id,sleep_log)]
     return(all_sleep_dat)
 }
