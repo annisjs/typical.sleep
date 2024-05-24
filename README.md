@@ -4,7 +4,7 @@ Can be used in the All of Us Researcher's Workbench or from a direct export from
 
 # Installation
 ```r
-devtools::install_github("annisjs/typical.sleep",updrade=F)
+devtools::install_github("annisjs/typical.sleep")
 ```
 
 # Usage
