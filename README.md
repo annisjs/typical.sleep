@@ -37,3 +37,9 @@ The package can also handle direct exports from Fitbit.
 json_test_data <- parse_fitbit_json("sleep-2023-03-14.json")
 dat <- typical.sleep(json_test_data)
 ```
+# The typical sleep algorithm
+Finds the typical sleep period in three steps: 
+  1. Finds relevant sleep logs are those that fall within +/-8 hours of the midsleep point. 
+  2. Determines the median bedtime and waketime from the relevant logs.
+  3. Labels each sleep log as either part of the typical sleep period or not by filtering out those
+    that are outside of the bedtime/waketime interval.
