@@ -18,7 +18,7 @@ Below we compute some sleep metrics when ```is_main_sleep``` is ```TRUE```.
 Tutorials on how to work with AoU sleep data can be found here: [How to Work With Wearable Device Data (v7)](https://workbench.researchallofus.org/workspaces/aou-rw-f7c56f30/howtoworkwithwearabledevicedatav7/analysis).
 ```r
 # Assuming dat is a data.frame that shares the same schema as the sleep_level table in AoU.
-sleep_metrics <- compute_sleep_metrics(dat[is_main_sleep == TRUE])
+sleep_metrics <- compute_sleep_metrics(dat[is_main_sleep == TRUE],"sleep_date")
 ```
 The ```typical.sleep``` function returns the original dataset plus 2 additional columns: ```typical_sleep_date``` and ```is_typical_sleep```.
 The ```typical_sleep_date``` is the recomputed date of sleep via the typical sleep algorithm. ```is_typical_sleep``` is ```TRUE``` when the
@@ -28,7 +28,7 @@ To run the typical sleep algorithm and compute some
 sleep metrics is easy:
 ```r
 dat <- typical.sleep(dat)
-tsp_metrics <- compute_sleep_metrics(dat[is_typical_sleep == TRUE])
+tsp_metrics <- compute_sleep_metrics(dat[is_typical_sleep == TRUE],"typical_sleep_date")
 ```
 
 The package can also handle direct exports from Fitbit. 

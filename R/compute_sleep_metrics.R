@@ -123,7 +123,7 @@ compute_sleep_metrics <- function(sleep_data,date_col)
   
   # Second-order metrics
   out[, sleep_efficiency := round(100 * total_sleep_time / time_in_bed,1)]
-  out[, sleep_onset_latency := interval(bedtime, sleep_onset) / minutes(1)]
+  out[, sleep_onset_latency := lubridate::interval(bedtime, sleep_onset) / lubridate::minutes(1)]
   
   return(out)
 }
