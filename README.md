@@ -17,7 +17,7 @@ The table has the following columns: ```person_id```, ```sleep_date```, ```start
 Below we compute some sleep metrics when ```is_main_sleep``` is ```TRUE```.
 Tutorials on how to work with AoU sleep data can be found here: [How to Work With Wearable Device Data (v7)](https://workbench.researchallofus.org/workspaces/aou-rw-f7c56f30/howtoworkwithwearabledevicedatav7/analysis).
 ```r
-# Assuming ```dat``` is a ```data.frame``` that shares the same schema as the ```sleep_level``` table in AoU.
+# Assuming dat is a data.frame that shares the same schema as the sleep_level table in AoU.
 sleep_metrics <- compute_sleep_metrics(dat[is_main_sleep == TRUE])
 ```
 The ```typical.sleep``` function returns the original dataset plus 2 additional columns: ```typical_sleep_date``` and ```is_typical_sleep```.
