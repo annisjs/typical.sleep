@@ -1,5 +1,6 @@
 #' Reverses center
 #' @param x integer on the interval [-720,720]
+#' @noRd
 uncenter <- function(x)
 {
     # Reverses center

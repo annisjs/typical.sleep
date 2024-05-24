@@ -3,10 +3,10 @@
 #' @param date_col name of date column
 #' @return A dataframe with the following columns:
 #' \describe{
-#'   \item{sleep_onset}{The start_datetime of the first sleep segment, where sleep segment levels are not wake, awake, or restless.}
+#'   \item{sleep_onset}{The start datetime of the first sleep segment, where sleep segment levels are not wake, awake, or restless.}
 #'   \item{sleep_offset}{The end datetime of the last sleep segment, where sleep segment levels are not wake, awake, or restless. The end datetime is computed by adding sleep duration to start_datetime.}
-#'   \item{sleep_duration}{Duration of sleep in minutes. eqn{(sleep_offset - sleep_onset) / 60}}
-#'   \item{midsleep_point}{Midpoint between sleep_onset and sleep_offset. eqn{(sleep_onset + sleep_offset) / 2}}
+#'   \item{sleep_duration}{Duration of sleep in minutes. (sleep offset - sleep onset) / 60}
+#'   \item{midsleep_point}{Midpoint between sleep_onset and sleep_offset. (sleep onset + sleep offset) / 2}
 #'   \item{total_sleep_time}{Sum of all sleep segment durations, where level is not awake, wake, or restless.}
 #'   \item{rem_duration}{Sum of all sleep segment durations, where level is rem.}
 #'   \item{deep_duration}{Sum of all sleep segment durations, where level is deep.}
@@ -23,14 +23,21 @@
 #'   \item{pct_wake}{Percentage of wake sleep levels. Denominator is the sum of all sleep segment durations.}
 #'   \item{bedtime}{start_datetime of first sleep segment.}
 #'   \item{waketime}{The end datetime of the final sleep segment.}
-#'   \item{time_in_bed}{Time in bed in minutes. eqn{(bedtime - waketime) / 60}.}
+#'   \item{time_in_bed}{Time in bed in minutes. (bedtime - waketime) / 60.}
 #'   \item{num_awakenings}{Number of contiguous sleep segments indcating an awakening. Segments of differing levels will be combined to form a single contiguous sleep segment given the level is one of awake, wake, or restless.}
 #'   \item{num_long_awakenings}{Number of wake levels >= 30 minutes.}
 #'   \item{longest_wake_duration}{Longest wake duration in minutes.}
 #'   \item{wake_after_sleep_onset}{Duration in minutes of contiguous segments of awake, wake, and/or restless following at least one segment of sleep.}
-#'   \item{wake_to_end_of_log_latency}{Duration in minutes}
+#'   \item{wake_to_end_of_log_latency}{Duration in minutes of last awake, wake, or restless segment.}
 #' }
 #'@export
+#' 
+#'@examples
+#'\dontrun{
+#' # If parsing from JSON format
+#' dat <- parse_fitbit_json("sleep_data.json")
+#' metrics <- compute_sleep_metrics(dat)
+#'}
 compute_sleep_metrics <- function(sleep_data,date_col)
 {
   setkey(sleep_data, person_id, start_datetime)
@@ -89,14 +96,10 @@ compute_sleep_metrics <- function(sleep_data,date_col)
   .(
     awake_duration = fifelse(any(level=="awake"),sum(duration_in_min[level=="awake"]),as.double(NA)),
     wake_duration = fifelse(any(level=="wake"),sum(duration_in_min[level=="wake"]),as.double(NA)),
-    awake_combined =  fifelse(any(level=="awake" | level=="wake"),
-                              sum(duration_in_min[level=="awake"|level=="wake"]),as.double(NA)),  
     restless_duration = fifelse(any(level=="restless"),sum(duration_in_min[level=="restless"]),as.double(NA)),
     pct_restless = fifelse(any(level=="restless"),sum(duration_in_min[level=="restless"])/sum(duration_in_min),as.double(NA)),
     pct_awake = fifelse(any(level=="awake"),sum(duration_in_min[level=="awake"])/sum(duration_in_min),as.double(NA)),
     pct_wake = fifelse(any(level=="wake"),sum(duration_in_min[level=="wake"])/sum(duration_in_min),as.double(NA)),
-    pct_wake_combined = fifelse(any(level=="awake" | level=="wake"),
-                              sum(duration_in_min[level=="awake"|level=="wake"])/sum(duration_in_min),as.double(NA)),
     bedtime = start_datetime[1],
     waketime = end_time[.N],
     time_in_bed = as.numeric(end_time[.N] - start_datetime[1]) / 60,
@@ -129,6 +132,7 @@ compute_sleep_metrics <- function(sleep_data,date_col)
 #' @param all_sleep_dat Dataset containing sleep segments. Must contain person_id, is_main_sleep, date_col, level, and start_datetime.
 #' @param date_col name of date column
 #' @return dataframe with person_id, date_col, nap_count, and nap_length
+#' @noRd 
 get_naps <- function(all_sleep_dat,date_col)
 {
   all_sleep_dat_temp <- all_sleep_dat[is_main_sleep==FALSE][order(person_id,start_datetime)]

@@ -5,6 +5,7 @@
 #' Minutes are mapped thusly: \cr
 #' 720:1439 -> -720:-1 \cr
 #' 0:720 -> 0:720 \cr
+#' @noRd
 center <- function(x)
 {
     fifelse(x >= 12*60, x - 24*60, x)

@@ -1,6 +1,7 @@
 #' Find relevant sleep logs
 #' @param all_sleep_dat sleep-levels dataset containing the following columns: person_id, date, start_time, level, duration, and is_main_sleep.
 #' @description finds relevant sleep logs by computing the median sleep point when is_main_sleep is TRUE and filtering out sleep logs that are outside of that interval.
+#' @noRd
 find_relevant_sleep <- function(all_sleep_dat)
 {
     # Use the median MSP to look for all relevant sleep

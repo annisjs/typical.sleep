@@ -24,6 +24,7 @@ typical.sleep <- function(sleep_data)
 
 #' Typical sleep algorithm
 #' @param all_sleep_dat sleep-levels dataset containing the following columns: person_id, sleep_date, start_datetime, level, duration_in_min, and is_main_sleep.
+#' @noRd
 .tsp <- function(all_sleep_dat)
 {
     setkey(all_sleep_dat, person_id, start_datetime)
@@ -81,6 +82,9 @@ typical.sleep <- function(sleep_data)
     return(all_sleep_dat)
 }
 
+#' Insert wake levels between stitched logs
+#' @param all_sleep_dat dataframe containing the following columns: person_id, date_new, start_datetime, end_time.
+#' @noRd 
 insert_wakes <- function(all_sleep_dat)
 {
     setkey(all_sleep_dat,person_id,start_datetime)
