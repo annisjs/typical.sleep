@@ -2,5 +2,5 @@
 
 export(compute_sleep_metrics)
 export(parse_fitbit_json)
-export(typical.sleep)
+export(typical_sleep)
 import(data.table)

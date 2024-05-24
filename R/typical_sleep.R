@@ -10,7 +10,7 @@
 #'    3. Labels each sleep log as either part of the typical sleep period or not by filtering out those
 #'    that are outside of the bedtime/waketime interval.
 #' @export
-typical.sleep <- function(sleep_data)
+typical_sleep <- function(sleep_data)
 {
   sleep_data <- prepare_data(sleep_data)
   sleep_data <- find_relevant_sleep(sleep_data)
