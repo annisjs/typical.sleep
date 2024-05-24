@@ -15,9 +15,9 @@ library(typical.sleep)
 Data is assumed to be in the format provided by the sleep_levels table in the All of Us Researcher's Workbench.
 The table has the following columns: ```person_id```, ```sleep_date```, ```start_datetime```, ```is_main_sleep```, ```level```, ```duration```.
 Below we compute some sleep metrics when ```is_main_sleep``` is ```TRUE```.
+Tutorials on how to work with AoU sleep data can be found here: [How to Work With Wearable Device Data (v7)](https://workbench.researchallofus.org/workspaces/aou-rw-f7c56f30/howtoworkwithwearabledevicedatav7/analysis).
 ```r
-# Read in some sleep data.
-dat <- data.table::fread("all_of_us_sleep_levels_data.csv")
+# Assuming ```dat``` is a ```data.frame``` that shares the same schema as the ```sleep_level``` table in AoU.
 sleep_metrics <- compute_sleep_metrics(dat[is_main_sleep == TRUE])
 ```
 The ```typical.sleep``` function returns the original dataset plus 2 additional columns: ```typical_sleep_date``` and ```is_typical_sleep```.
@@ -34,7 +34,7 @@ tsp_metrics <- compute_sleep_metrics(dat[is_typical_sleep == TRUE])
 The package can also handle direct exports from Fitbit. 
 [How do I export my Fitbit data?](https://support.google.com/fitbit/answer/14236615?hl=en#zippy=%2Chow-do-i-export-my-fitbit-data).
 ```r
-json_test_data <- parse_fitbit_json("sleep-2023-03-14.json")
+json_test_data <- parse_fitbit_json("my-sleep-data.json")
 dat <- typical.sleep(json_test_data)
 ```
 # The typical sleep algorithm
