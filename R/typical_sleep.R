@@ -10,15 +10,21 @@
 #'    3. Labels each sleep log as either part of the typical sleep period or not by filtering out those
 #'    that are outside of the bedtime/waketime interval.
 #' @export
+#' @import data.table
 typical_sleep <- function(sleep_data)
 {
-  sleep_data <- prepare_data(sleep_data)
+  if (is.null(attr(sleep_data,"format")))
+  {
+    stop("Not a sleep_logs object. Run as_sleep_logs() on dataset first.")
+  }
   sleep_data <- find_relevant_sleep(sleep_data)
   sleep_data <- .tsp(sleep_data)
   # Return column names to original
-  setnames(sleep_data,"date","sleep_date")
   setnames(sleep_data,"date_new","typical_sleep_date")
-  sleep_data <- sleep_data[,c("person_id","sleep_date","start_datetime","level","duration_in_min","is_main_sleep","typical_sleep_date","is_typical_sleep")]
+  sleep_data <- sleep_data[,c("person_id","sleep_date","start_datetime","level","duration_in_min",
+  "is_main_sleep","sleep_log","start_datetime_log","end_time_log","typical_sleep_date","is_typical_sleep")]
+  setattr(sleep_data,"sleep_type","typical")
+  setattr(sleep_data,"format","log")
   return(sleep_data)
 }
 
@@ -103,7 +109,7 @@ insert_wakes <- function(all_sleep_dat)
     wake_between[, duration_in_min := lead_diff]
     wake_between[, level := "awake"]
     # Cleanup
-    wake_between[, start_time_lag := NULL]
+    #wake_between[, start_time_lag := NULL]
     wake_between[, end_time_lead_day := NULL]
     wake_between[, lead_diff := NULL]
     # Add the new sleep logs to the original dataset

@@ -11,8 +11,8 @@ find_relevant_sleep <- function(all_sleep_dat)
     setkey(all_sleep_dat, person_id, start_datetime)
     first_last_asleep <- all_sleep_dat[is_main_sleep == TRUE & level != "awake" & level != "wake" & level != "restless", 
                                     .(start_datetime = start_datetime[1],
-                                        end_time = end_time[.N]),
-                                    .(person_id,date)]
+                                      end_time = end_time[.N]),
+                                    .(person_id,sleep_date)]
     # Center over midnight (i.e. noon-to-noon)
     first_last_asleep[, first_asleep_minute := time_to_minute(start_datetime)]
     first_last_asleep[, last_asleep_minute := time_to_minute(end_time)]
@@ -65,6 +65,6 @@ find_relevant_sleep <- function(all_sleep_dat)
     all_sleep_dat[, msp := FALSE]
     all_sleep_dat[dt_overlaps$xid, msp := TRUE]
     all_sleep_dat[dt_overlaps$xid, date_new := lubridate::as_date(dt_overlaps$date)]
-    all_sleep_dat[, date_new := max(date),.(person_id,date_new)]
+    all_sleep_dat[, date_new := lubridate::date(end_time_log[.N]),.(person_id,date_new)]
     return(all_sleep_dat)
 }

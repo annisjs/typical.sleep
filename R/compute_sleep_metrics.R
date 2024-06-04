@@ -1,6 +1,6 @@
 #' Compute sleep metrics. All metrics are computed for each person_id and date.
 #' @param sleep_data sleep-levels dataset containing the following columns: person_id, date, start_time, level, duration, and is_main_sleep. 
-#' @param date_col name of date column
+#' @param sleep_type character string specifying the primary sleep period to operate over, "main_sleep" or "typical_sleep". If sleep_type is "typical_sleep," then the typical_sleep algorithm must be run first.
 #' @return A dataframe with the following columns:
 #' \describe{
 #'   \item{sleep_onset}{The start datetime of the first sleep segment, where sleep segment levels are not wake, awake, or restless.}
@@ -36,17 +36,38 @@
 #'\dontrun{
 #' # If parsing from JSON format
 #' dat <- parse_fitbit_json("sleep_data.json")
-#' metrics <- compute_sleep_metrics(dat)
+#' metrics <- compute_sleep_metrics(dat,"main_sleep")
+#' print(metrics)
+#' tsp_dat <- typical_sleep(dat)
+#' tsp_metrics <- compute_sleep_metrics(tsp_dat,"typical_sleep")
+#' print(tsp_metrics)
 #'}
-compute_sleep_metrics <- function(sleep_data,date_col)
+compute_sleep_metrics <- function(sleep_data)
 {
+  AWAKE_LEVELS <- c("awake","wake","restless","imputed_awake")
+  if (is.null(attr(sleep_data,"format")))
+  {
+    stop("Not a sleep_logs object. Run as_sleep_logs() on dataset first.")
+  }
+  if (is.null(attr(sleep_data,"sleep_type")))
+  {
+     date_col <- "sleep_date"
+     nap_agg <- get_naps(sleep_data,date_col,"is_main_sleep")
+     sleep_data <- sleep_data[is_main_sleep == TRUE]
+     attr(sleep_data,"format") <- "log"
+  } else if (attr(sleep_data,"sleep_type") == "typical")
+  {
+    date_col <- "typical_sleep_date"
+    nap_agg <- get_naps(sleep_data,date_col,"is_typical_sleep")
+    sleep_data <- sleep_data[is_typical_sleep == TRUE]
+  }
   setkey(sleep_data, person_id, start_datetime)
   sleep_data[, end_time := start_datetime + lubridate::seconds(duration_in_min * 60)]
   sleep_data[, sleep_start_new := center(time_to_minute(start_datetime))]
   sleep_data[, sleep_end_new := center(time_to_minute(end_time))]
   # The following creates variables to help compute wake metrics
   # Identify all wake levels
-  sleep_data[, wake_flag := level == "wake" | level == "awake" | level == "restless"]
+  sleep_data[, wake_flag := level %in% AWAKE_LEVELS]
   # Move wake flag forward one row
   sleep_data[, flag_lag := shift(wake_flag,1),by=c("person_id",date_col)]
   # Find the difference between wake_flag i and wake_flag i - 1
@@ -71,10 +92,7 @@ compute_sleep_metrics <- function(sleep_data,date_col)
   sleep_data[, long_wake_seq := cumsum(long_diff==1 & !is.na(long_diff)),by=c("person_id",date_col)]
   sleep_data[long_awakenings_flag == FALSE, long_wake_seq := 0]
   
-  # Last awake
-  sleep_data[level == "wake" | level == "awake" | level == "restless", last_awake := duration_in_min[.N],by=c("person_id",date_col)]
-  
-  sleep_agg <- sleep_data[level != "wake" & level != "awake" & level != "restless",
+  sleep_agg <- sleep_data[!level %in% AWAKE_LEVELS,
   .(
     sleep_onset = start_datetime[1],
     sleep_offset = end_time[.N],
@@ -91,6 +109,9 @@ compute_sleep_metrics <- function(sleep_data,date_col)
     pct_asleep = fifelse(any(level=="asleep"),sum(duration_in_min[level=="asleep"])/sum(duration_in_min),as.double(NA))
    ),
   by=c("person_id",date_col)]
+  
+  # Need sleep offset in sleep_data
+  sleep_data <- merge(sleep_data,sleep_agg[,.SD,.SDcols=c("person_id",date_col,"sleep_offset")],by=c("person_id",date_col))
   
   awake_agg <- sleep_data[,
   .(
@@ -109,14 +130,13 @@ compute_sleep_metrics <- function(sleep_data,date_col)
     wake_after_sleep_onset = fifelse(any(has_wake_after_sleep),
                    sum(duration_in_min[wake_flag_split == TRUE]),
                    as.double(NA)),
-    wake_to_end_of_log_latency = ifelse(any(!is.na(last_awake)),last_awake[!is.na(last_awake)][1],NA)
+    wake_to_end_of_log_latency = as.numeric(end_time_log[.N] -  sleep_offset[1]) / 60
   ),
   by = c("person_id",date_col)]
 
   out <- merge(awake_agg, sleep_agg, by=c("person_id",date_col))
   
   # Add naps
-  nap_agg <- get_naps(sleep_data,date_col)
   out <- merge(out,nap_agg,by=c("person_id",date_col),all.x=T)
   out[, nap_count := fifelse(is.na(nap_count),0,nap_count)]
   out[, nap_length := fifelse(is.na(nap_length),0,nap_length)]
@@ -133,28 +153,11 @@ compute_sleep_metrics <- function(sleep_data,date_col)
 #' @param date_col name of date column
 #' @return dataframe with person_id, date_col, nap_count, and nap_length
 #' @noRd 
-get_naps <- function(all_sleep_dat,date_col)
+get_naps <- function(all_sleep_dat,date_col,sleep_period_type)
 {
-  all_sleep_dat_temp <- all_sleep_dat[is_main_sleep==FALSE][order(person_id,start_datetime)]
-  # The following creates variables to help compute wake metrics
-  # Identify all wake levels
-  all_sleep_dat_temp[, sleep_flag := level != "wake" & level != "awake" & level != "restless"]
-  # Move wake flag forward one row
-  all_sleep_dat_temp[, flag_lag := shift(sleep_flag,1),by=c("person_id",date_col)]
-  # Find the difference between wake_flag i and wake_flag i - 1
-  all_sleep_dat_temp[, diff := sleep_flag - flag_lag]
-  # If we have a diff == 1, then this indicates a new awake level
-  # Create a sequence variable that indicates the number of awakenings (1,2,3,...,N awakenings)
-  all_sleep_dat_temp[, sleep_seq := cumsum(diff==1 & !is.na(diff)),by=c("person_id",date_col)]
-  all_sleep_dat_temp[sleep_flag == FALSE, sleep_seq := 0]
-  # Create a logical variable that indicates when a new awakening occurs
-  all_sleep_dat_temp[, sleep_flag_split := sleep_seq > 0]
-  if (nrow(all_sleep_dat_temp) > 0)
-  {
-    nap_agg <- all_sleep_dat_temp[,.(nap_count = fifelse(any(!is.na(sleep_seq)),max(sleep_seq),as.double(NA)),
-                                   nap_length = sum(duration_in_min[sleep_flag_split == TRUE])),by=c("person_id",date_col)]
-  } else {
-    nap_agg <- all_sleep_dat[, .(nap_count = 0, nap_length = 0),by=c("person_id",date_col)]
-  }
-  return(nap_agg)
+  AWAKE_LEVELS <- c("awake","wake","restless","imputed_awake")
+  all_sleep_dat_temp <- all_sleep_dat[get(sleep_period_type)==FALSE][order(person_id,start_datetime)]
+  all_sleep_dat_temp[, sleep_flag := !level %in% AWAKE_LEVELS]
+  nap_agg <- all_sleep_dat_temp[,.(nap_count = length(unique(sleep_log)),
+                                   nap_length = sum(duration_in_min[sleep_flag == TRUE])),by=c("person_id",date_col)]
 }
