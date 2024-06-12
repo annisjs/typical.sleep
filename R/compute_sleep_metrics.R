@@ -124,9 +124,9 @@ compute_sleep_metrics <- function(sleep_data)
     bedtime = start_datetime[1],
     waketime = end_time[.N],
     time_in_bed = as.numeric(end_time[.N] - start_datetime[1]) / 60,
-    num_awakenings = max(wake_seq),
-    num_long_awakenings = max(long_wake_seq),
-    longest_awake_length = fifelse(any(!is.na(longest_wake_duration)),max(longest_wake_duration,na.rm=T),as.double(NA)),
+    num_awakenings = max_no_warn(wake_seq),
+    num_long_awakenings = max_no_warn(long_wake_seq),
+    longest_awake_length = fifelse(any(!is.na(longest_wake_duration)),max_no_warn(longest_wake_duration,na.rm=T),as.double(NA)),
     wake_after_sleep_onset = fifelse(any(has_wake_after_sleep),
                    sum(duration_in_min[wake_flag_split == TRUE]),
                    as.double(NA)),
@@ -161,3 +161,5 @@ get_naps <- function(all_sleep_dat,date_col,sleep_period_type)
   nap_agg <- all_sleep_dat_temp[,.(nap_count = length(unique(sleep_log)),
                                    nap_length = sum(duration_in_min[sleep_flag == TRUE])),by=c("person_id",date_col)]
 }
+
+max_no_warn <- function(x) {if (length(x)>0) max(x) else as.double(NA)}
