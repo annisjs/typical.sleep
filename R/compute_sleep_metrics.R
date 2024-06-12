@@ -162,4 +162,4 @@ get_naps <- function(all_sleep_dat,date_col,sleep_period_type)
                                    nap_length = sum(duration_in_min[sleep_flag == TRUE])),by=c("person_id",date_col)]
 }
 
-max_no_warn <- function(x) {if (length(x)>0) max(x) else as.double(NA)}
+max_no_warn <- function(x,na.rm=T) {if (length(x)>0 & any(!is.na(x))) max(x,na.rm=na.rm) else as.double(NA)}
