@@ -93,7 +93,6 @@ typical_sleep <- function(sleep_data)
 #' @noRd 
 insert_wakes <- function(all_sleep_dat)
 {
-    setkey(all_sleep_dat,person_id,start_datetime)
     # Insert wakes
     # Add wake between levels
     # Create variable that holds end_time i - 1
@@ -106,16 +105,12 @@ insert_wakes <- function(all_sleep_dat)
     # Relabel the variables to create a new wake sleep logs
     wake_between[, end_time := start_datetime]
     wake_between[, start_datetime := end_time_lead_day]
-    wake_between[, duration_in_min := lead_diff]
-    wake_between[, level := "awake"]
+    wake_between[, duration := lead_diff]
+    wake_between[, level := "imputed_awake"]
     # Cleanup
-    #wake_between[, start_time_lag := NULL]
+    wake_between[, start_time_lag := NULL]
     wake_between[, end_time_lead_day := NULL]
     wake_between[, lead_diff := NULL]
-    # Add the new sleep logs to the original dataset
-    wake_between[, added_wake_segment := TRUE]
-    all_sleep_dat[, added_wake_segment := FALSE]
     all_sleep_dat <- rbind(all_sleep_dat,wake_between,fill=TRUE)
     setkey(all_sleep_dat,person_id,start_datetime)
-    return(all_sleep_dat)
 }
