@@ -108,7 +108,6 @@ insert_wakes <- function(all_sleep_dat)
     wake_between[, duration := lead_diff]
     wake_between[, level := "imputed_awake"]
     # Cleanup
-    wake_between[, start_time_lag := NULL]
     wake_between[, end_time_lead_day := NULL]
     wake_between[, lead_diff := NULL]
     all_sleep_dat <- rbind(all_sleep_dat,wake_between,fill=TRUE)
