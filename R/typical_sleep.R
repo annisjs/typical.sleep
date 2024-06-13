@@ -59,16 +59,16 @@ typical_sleep <- function(sleep_data)
     #  |-----------|------x1-----|-----x2-----|
     # noon    midnight         noon        midnight
     all_sleep_dat[sleep_start_new > sleep_end_new & sleep_end_new <= 0, 
-                        sleep_end_new := 720 + (720 + sleep_end_new)]
+                        sleep_end_new := 1440 + sleep_end_new]
     # Another example that falls outside of noon-to-noon
     #  |-----------|------x1-----|----------|------x2-----|
     # noon    midnight         noon        midnight     noon
     all_sleep_dat[(sleep_start_new > sleep_end_new) & sleep_end_new > 0,
-                        sleep_end_new := sleep_start_new + (720-sleep_start_new) + 720 + sleep_end_new]
+                        sleep_end_new := 1440 + sleep_end_new]
     first_last_asleep_ranges[(median_sleep_start > median_sleep_end) & median_sleep_end <= 0,
-                            median_sleep_end := 720 + (720 + median_sleep_end)] 
+                            median_sleep_end := 1440 + median_sleep_end] 
     first_last_asleep_ranges[(median_sleep_start > median_sleep_end) & median_sleep_end > 0,
-                        median_sleep_start := median_sleep_start + (720-median_sleep_start) + 720 + median_sleep_end]
+                        median_sleep_end := 1440 + median_sleep_end]
     # In order to capture these days, we need to add 1 day to the ranges
     first_last_asleep_ranges[, median_sleep_start2 := median_sleep_start + 1440]
     first_last_asleep_ranges[, median_sleep_end2 := median_sleep_end + 1440]
