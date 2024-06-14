@@ -112,6 +112,6 @@ insert_wakes <- function(all_sleep_dat)
     wake_between[, end_time_lead_day := NULL]
     wake_between[, lead_diff := NULL]
     all_sleep_dat <- rbind(all_sleep_dat,wake_between,fill=TRUE)
-    all_sleep_dat <- all_sleep_dat[!is.na(date_new) & level != "imputed_awake"]
+    all_sleep_dat <- all_sleep_dat[!(is.na(date_new) & level == "imputed_awake")]
     setkey(all_sleep_dat,person_id,start_datetime)
 }
