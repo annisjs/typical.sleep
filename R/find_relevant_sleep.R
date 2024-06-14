@@ -65,6 +65,6 @@ find_relevant_sleep <- function(all_sleep_dat)
     all_sleep_dat[, msp := FALSE]
     all_sleep_dat[dt_overlaps$xid, msp := TRUE]
     all_sleep_dat[dt_overlaps$xid, date_new := lubridate::as_date(dt_overlaps$date)]
-    all_sleep_dat[, date_new := lubridate::date(end_time_log[.N]),.(person_id,date_new)]
+    #all_sleep_dat[, date_new := lubridate::date(end_time_log[.N]),.(person_id,date_new)]
     return(all_sleep_dat)
 }
