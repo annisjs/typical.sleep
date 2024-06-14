@@ -93,6 +93,7 @@ typical_sleep <- function(sleep_data)
 #' @noRd 
 insert_wakes <- function(all_sleep_dat)
 {
+    setkey(all_sleep_dat, person_id, start_datetime)
     # Insert wakes
     # Add wake between levels
     # Create variable that holds end_time i - 1
