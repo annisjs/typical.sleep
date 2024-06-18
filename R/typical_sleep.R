@@ -37,19 +37,19 @@ typical_sleep <- function(sleep_data)
     # all_sleep_dat now only contains relevant sleep logs from the MSP.
     # The next step is to estimate the median bedtime and waketime from relevant sleeps. 
     first_last_asleep <- all_sleep_dat[ level != "awake" & level != "wake" & level != "restless" & msp == TRUE,
-                                    .(start_datetime = start_datetime[1],
-                                        end_time = end_time[.N]),
+                                    .(start_datetime_log = start_datetime_log[1],
+                                      end_time_log = end_time_log[.N]),
                                     .(person_id,date_new)]
     # Center over midnight
-    first_last_asleep[, first_asleep_minute := time_to_minute(start_datetime)]
-    first_last_asleep[, last_asleep_minute := time_to_minute(end_time)]
+    first_last_asleep[, first_asleep_minute := time_to_minute(start_datetime_log)]
+    first_last_asleep[, last_asleep_minute := time_to_minute(end_time_log)]
     first_last_asleep[, last_asleep_minute_new := center(last_asleep_minute)]
     first_last_asleep[, first_asleep_minute_new := center(first_asleep_minute)]
     # Compute the median bedtime and waketime
     first_last_asleep <- first_last_asleep[, median_sleep_start := median(first_asleep_minute_new),.(person_id)]
     first_last_asleep <- first_last_asleep[, median_sleep_end := median(last_asleep_minute_new),.(person_id)]
     # Any sleep log with a BT or WT between "True BT" and "True WT"
-    first_last_asleep_ranges <- first_last_asleep[, c("person_id","median_sleep_start","median_sleep_end")]
+    first_last_asleep_ranges <- first_last_asleep[, c("person_id","median_sleep_start","median_sleep_end","start_datetime_log")]
     first_last_asleep_ranges <- first_last_asleep_ranges[!duplicated(first_last_asleep_ranges)]
     # Key by sleep log
     setkey(all_sleep_dat, person_id, start_datetime_log, end_time_log)
@@ -70,20 +70,31 @@ typical_sleep <- function(sleep_data)
     first_last_asleep_ranges[(median_sleep_start > median_sleep_end) & median_sleep_end > 0,
                         median_sleep_end := 1440 + median_sleep_end]
     # In order to capture these days, we need to add 1 day to the ranges
-    first_last_asleep_ranges[, median_sleep_start2 := median_sleep_start + 1440]
-    first_last_asleep_ranges[, median_sleep_end2 := median_sleep_end + 1440]
+    first_last_asleep_ranges[, median_sleep_start := lubridate::ymd(lubridate::as_date(start_datetime_log)) + lubridate::seconds(median_sleep_start*60)]
+    first_last_asleep_ranges[, median_sleep_end := lubridate::ymd(lubridate::as_date(start_datetime_log)) + lubridate::seconds(median_sleep_end*60)]
+    first_last_asleep_ranges[, median_sleep_start2 := median_sleep_start + lubridate::days(1)]
+    first_last_asleep_ranges[, median_sleep_end2 := median_sleep_end + lubridate::days(1)]
+    first_last_asleep_ranges[, median_sleep_start3 := median_sleep_start - lubridate::days(1)]
+    first_last_asleep_ranges[, median_sleep_end3 := median_sleep_end - lubridate::days(1)]
     # Now that we've taken care of the special cases, find all logs that overlap or are within the TSP.
     setkey(first_last_asleep_ranges, person_id, median_sleep_start, median_sleep_end)
-    setkey(all_sleep_dat, person_id, sleep_start_new, sleep_end_new)
+    setkey(all_sleep_dat, person_id, start_datetime_log, end_time_log)
     dt_overlaps <- foverlaps(all_sleep_dat, first_last_asleep_ranges, type = "any", nomatch = NULL, which = TRUE)
+    dt_overlaps[, date := lubridate::as_datetime(first_last_asleep_ranges$median_sleep_end[dt_overlaps$yid])]
     setkey(first_last_asleep_ranges, person_id, median_sleep_start2, median_sleep_end2)
     dt_overlaps2 <- foverlaps(all_sleep_dat, first_last_asleep_ranges, type = "any", nomatch = NULL, which = TRUE)
-    dt_overlaps <- dt_overlaps[,c("xid")]
-    dt_overlaps2 <- dt_overlaps2[, c("xid")]
-    dt_overlaps <- rbind(dt_overlaps,dt_overlaps2)
+    dt_overlaps2[, date := lubridate::as_datetime(first_last_asleep_ranges$median_sleep_end2[dt_overlaps2$yid])]
+    setkey(first_last_asleep_ranges, person_id, median_sleep_start3, median_sleep_end3)
+    dt_overlaps3 <- foverlaps(all_sleep_dat, first_last_asleep_ranges, type = "any", nomatch = NULL, which = TRUE)
+    dt_overlaps3[, date := lubridate::as_datetime(first_last_asleep_ranges$median_sleep_end3[dt_overlaps3$yid])]
+    dt_overlaps <- dt_overlaps[,c("xid","date")]
+    dt_overlaps2 <- dt_overlaps2[, c("xid","date")]
+    dt_overlaps3 <- dt_overlaps3[, c("xid","date")]
+    dt_overlaps <- rbind(dt_overlaps,dt_overlaps2,dt_overlaps3)
     dt_overlaps <- dt_overlaps[!duplicated(dt_overlaps[,c("xid")])]
     all_sleep_dat[, is_typical_sleep := FALSE]
     all_sleep_dat[dt_overlaps$xid, is_typical_sleep := TRUE]
+    all_sleep_dat[dt_overlaps$xid, date_new := lubridate::as_date(dt_overlaps$date)]
     all_sleep_dat <- insert_wakes(all_sleep_dat)
     return(all_sleep_dat)
 }
@@ -106,12 +117,11 @@ insert_wakes <- function(all_sleep_dat)
     # Relabel the variables to create a new wake sleep logs
     wake_between[, end_time := start_datetime]
     wake_between[, start_datetime := end_time_lead_day]
-    wake_between[, duration := lead_diff]
+    wake_between[, duration_in_min := lead_diff]
     wake_between[, level := "imputed_awake"]
     # Cleanup
     wake_between[, end_time_lead_day := NULL]
     wake_between[, lead_diff := NULL]
     all_sleep_dat <- rbind(all_sleep_dat,wake_between,fill=TRUE)
-    all_sleep_dat <- all_sleep_dat[!(is.na(date_new) & level == "imputed_awake")]
     setkey(all_sleep_dat,person_id,start_datetime)
 }

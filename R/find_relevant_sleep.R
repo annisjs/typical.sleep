@@ -19,7 +19,7 @@ find_relevant_sleep <- function(all_sleep_dat)
     first_last_asleep[, last_asleep_minute_new := center(last_asleep_minute)]
     first_last_asleep[, first_asleep_minute_new := center(first_asleep_minute)]
     # Compute the MSP
-    first_last_asleep <- first_last_asleep[, msp := (first_asleep_minute_new + last_asleep_minute_new) / 2]
+    first_last_asleep[, msp := (first_asleep_minute_new + last_asleep_minute_new) / 2]
     first_last_asleep[, median_msp := median(msp),.(person_id)]
     # Recenter over noon (i.e. midnight to midnight), so we can convert to timestamps
     first_last_asleep[, median_msp := fifelse(median_msp < 0, median_msp + 24*60, median_msp)]
@@ -44,17 +44,17 @@ find_relevant_sleep <- function(all_sleep_dat)
     setkey(all_sleep_dat, person_id, start_datetime_log, end_time_log)
     setkey(first_last_asleep_ranges, person_id, range_begin, range_end)
     dt_overlaps <- foverlaps(all_sleep_dat, first_last_asleep_ranges, type = "any", nomatch = NULL, which = TRUE)
-    dt_overlaps[, date := first_last_asleep_ranges$range_begin[dt_overlaps$yid]]
+    dt_overlaps[, date := first_last_asleep_ranges$range_end[dt_overlaps$yid]]
     # Repeat for +1 day
     # This ensures we don't drop any sleep logs and assign the correct day
     setkey(first_last_asleep_ranges, person_id, range_begin2, range_end2)
     dt_overlaps2 <- foverlaps(all_sleep_dat, first_last_asleep_ranges, type = "any", nomatch = NULL, which = TRUE)
-    dt_overlaps2[, date := first_last_asleep_ranges$range_begin2[dt_overlaps2$yid]]
+    dt_overlaps2[, date := first_last_asleep_ranges$range_end2[dt_overlaps2$yid]]
     # Repeat for -1 day
     # This ensures we don't drop any sleep logs and assign the correct day
     setkey(first_last_asleep_ranges, person_id, range_begin3, range_end3)
     dt_overlaps3 <- foverlaps(all_sleep_dat, first_last_asleep_ranges, type = "any", nomatch = NULL, which = TRUE)
-    dt_overlaps3[, date := first_last_asleep_ranges$range_begin3[dt_overlaps3$yid]]
+    dt_overlaps3[, date := first_last_asleep_ranges$range_end3[dt_overlaps3$yid]]
     # Combine all the overlap indices and remove duplicates
     dt_overlaps <- dt_overlaps[,c("xid","date")]
     dt_overlaps2 <- dt_overlaps2[, c("xid","date")]
@@ -65,6 +65,5 @@ find_relevant_sleep <- function(all_sleep_dat)
     all_sleep_dat[, msp := FALSE]
     all_sleep_dat[dt_overlaps$xid, msp := TRUE]
     all_sleep_dat[dt_overlaps$xid, date_new := lubridate::as_date(dt_overlaps$date)]
-    #all_sleep_dat[, date_new := lubridate::date(end_time_log[.N]),.(person_id,date_new)]
     return(all_sleep_dat)
 }
