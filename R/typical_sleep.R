@@ -46,8 +46,10 @@ typical_sleep <- function(sleep_data)
     first_last_asleep[, last_asleep_minute_new := center(last_asleep_minute)]
     first_last_asleep[, first_asleep_minute_new := center(first_asleep_minute)]
     # Compute the median bedtime and waketime
-    first_last_asleep <- first_last_asleep[, median_sleep_start := median(first_asleep_minute_new),.(person_id)]
-    first_last_asleep <- first_last_asleep[, median_sleep_end := median(last_asleep_minute_new),.(person_id)]
+    first_last_asleep[, median_sleep_start := median(first_asleep_minute_new),.(person_id)]
+    first_last_asleep[, median_sleep_end := median(last_asleep_minute_new),.(person_id)]
+    first_last_asleep[, msp := (first_asleep_minute_new + last_asleep_minute_new) / 2]
+    first_last_asleep[, median_msp := median(msp),.(person_id)]
     # Any sleep log with a BT or WT between "True BT" and "True WT"
     first_last_asleep_ranges <- first_last_asleep[, c("person_id","median_sleep_start","median_sleep_end","start_datetime_log")]
     first_last_asleep_ranges <- first_last_asleep_ranges[!duplicated(first_last_asleep_ranges)]
@@ -55,20 +57,13 @@ typical_sleep <- function(sleep_data)
     setkey(all_sleep_dat, person_id, start_datetime_log, end_time_log)
     all_sleep_dat[, sleep_start_new := center(time_to_minute(start_datetime_log))]
     all_sleep_dat[, sleep_end_new := center(time_to_minute(end_time_log))]
-    # This is rare but happens at noon crossings
-    #  |-----------|------x1-----|-----x2-----|
-    # noon    midnight         noon        midnight
-    all_sleep_dat[sleep_start_new > sleep_end_new & sleep_end_new <= 0, 
-                        sleep_end_new := 1440 + sleep_end_new]
-    # Another example that falls outside of noon-to-noon
-    #  |-----------|------x1-----|----------|------x2-----|
-    # noon    midnight         noon        midnight     noon
-    all_sleep_dat[(sleep_start_new > sleep_end_new) & sleep_end_new > 0,
-                        sleep_end_new := 1440 + sleep_end_new]
-    first_last_asleep_ranges[(median_sleep_start > median_sleep_end) & median_sleep_end <= 0,
-                            median_sleep_end := 1440 + median_sleep_end] 
-    first_last_asleep_ranges[(median_sleep_start > median_sleep_end) & median_sleep_end > 0,
-                        median_sleep_end := 1440 + median_sleep_end]
+    all_sleep_dat[, median_msp_new := median((sleep_start_new + sleep_end_new) / 2),.(person_id)]
+    all_sleep_dat[, bt_wt_by_msp := sleep_end_new - sleep_start_new <= 300]
+    all_sleep_dat[bt_wt_by_msp == TRUE, sleep_start_new := median_msp_new - 3.5*60]
+    all_sleep_dat[bt_wt_by_msp == TRUE, sleep_end_new := median_msp_new + 3.5*60]
+    first_last_asleep_ranges[, bt_wt_by_msp := median_sleep_end - median_sleep_start <= 300]
+    first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_start := median_sleep_start - 3.5*60]
+    first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_end := median_sleep_end - 3.5*60]
     # In order to capture these days, we need to add 1 day to the ranges
     first_last_asleep_ranges[, median_sleep_start := lubridate::ymd(lubridate::as_date(start_datetime_log)) + lubridate::seconds(median_sleep_start*60)]
     first_last_asleep_ranges[, median_sleep_end := lubridate::ymd(lubridate::as_date(start_datetime_log)) + lubridate::seconds(median_sleep_end*60)]
