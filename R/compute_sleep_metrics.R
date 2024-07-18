@@ -27,7 +27,7 @@
 #'   \item{num_awakenings}{Number of contiguous sleep segments indcating an awakening. Segments of differing levels will be combined to form a single contiguous sleep segment given the level is one of awake, wake, or restless.}
 #'   \item{num_long_awakenings}{Number of wake levels >= 30 minutes.}
 #'   \item{longest_wake_duration}{Longest wake duration in minutes.}
-#'   \item{wake_after_sleep_onset}{Duration in minutes of contiguous segments of awake, wake, and/or restless following at least one segment of sleep.}
+#'   \item{wake_after_sleep_onset}{Duration in minutes of segments of awake, wake, and/or restless following at least one segment of sleep.}
 #'   \item{wake_to_end_of_log_latency}{Duration in minutes of last awake, wake, or restless segment.}
 #'   \item{sleep_efficiency}{Percentage of time sleeping while in bed. 100 * total_sleep_time / time_in_bed}
 #' }
