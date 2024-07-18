@@ -55,9 +55,6 @@ typical_sleep <- function(sleep_data)
     first_last_asleep_ranges <- first_last_asleep_ranges[!duplicated(first_last_asleep_ranges)]
     # Key by sleep log
     setkey(all_sleep_dat, person_id, start_datetime_log, end_time_log)
-    all_sleep_dat[, sleep_start_new := center(time_to_minute(start_datetime_log))]
-    all_sleep_dat[, sleep_end_new := center(time_to_minute(end_time_log))]
-    all_sleep_dat[, median_msp_new := median((sleep_start_new + sleep_end_new) / 2),.(person_id)]
     first_last_asleep_ranges[, bt_wt_by_msp := median_sleep_end - median_sleep_start <= 300]
     first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_start := median_msp - 3.5*60]
     first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_end := median_msp + 3.5*60]
