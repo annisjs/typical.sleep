@@ -21,8 +21,8 @@
 #'   \item{pct_restless}{Percentage of restless sleep levels. Denominator is the sum of all sleep segment durations.}
 #'   \item{pct_awake}{Percentage of awake sleep levels. Denominator is the sum of all sleep segment durations.}
 #'   \item{pct_wake}{Percentage of wake sleep levels. Denominator is the sum of all sleep segment durations.}
-#'   \item{bedtime}{start datetime of first sleep segment.}
-#'   \item{waketime}{The end datetime of the final sleep segment.}
+#'   \item{bedtime}{start datetime of first sleep log.}
+#'   \item{waketime}{The end datetime of the final sleep log.}
 #'   \item{time_in_bed}{Time in bed in minutes. (bedtime - waketime) / 60.}
 #'   \item{num_awakenings}{Number of contiguous sleep segments indcating an awakening. Segments of differing levels will be combined to form a single contiguous sleep segment given the level is one of awake, wake, or restless.}
 #'   \item{num_long_awakenings}{Count of all contiguous wake, awake, and restless sleep segments >=30 minutes in duration between sleep onset and sleep offset.}
