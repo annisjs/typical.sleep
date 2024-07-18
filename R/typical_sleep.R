@@ -60,7 +60,7 @@ typical_sleep <- function(sleep_data)
     all_sleep_dat[, median_msp_new := median((sleep_start_new + sleep_end_new) / 2),.(person_id)]
     first_last_asleep_ranges[, bt_wt_by_msp := median_sleep_end - median_sleep_start <= 300]
     first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_start := median_sleep_start - 3.5*60]
-    first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_end := median_sleep_end - 3.5*60]
+    first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_end := median_sleep_end + 3.5*60]
     # In order to capture these days, we need to add 1 day to the ranges
     first_last_asleep_ranges[, median_sleep_start := lubridate::ymd(lubridate::as_date(start_datetime_log)) + lubridate::seconds(median_sleep_start*60)]
     first_last_asleep_ranges[, median_sleep_end := lubridate::ymd(lubridate::as_date(start_datetime_log)) + lubridate::seconds(median_sleep_end*60)]
