@@ -1,6 +1,5 @@
 #' Compute sleep metrics. All metrics are computed for each person_id and date.
 #' @param sleep_data sleep-levels dataset containing the following columns: person_id, date, start_time, level, duration, and is_main_sleep. 
-#' @param sleep_type character string specifying the primary sleep period to operate over, "main_sleep" or "typical_sleep". If sleep_type is "typical_sleep," then the typical_sleep algorithm must be run first.
 #' @return A dataframe with the following columns:
 #' \describe{
 #'   \item{sleep_onset}{The start datetime of the first sleep segment, where sleep segment levels are not wake, awake, or restless.}

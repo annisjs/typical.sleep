@@ -8,8 +8,6 @@ compute_sleep_metrics(sleep_data)
 }
 \arguments{
 \item{sleep_data}{sleep-levels dataset containing the following columns: person_id, date, start_time, level, duration, and is_main_sleep.}
-
-\item{sleep_type}{character string specifying the primary sleep period to operate over, "main_sleep" or "typical_sleep". If sleep_type is "typical_sleep," then the typical_sleep algorithm must be run first.}
 }
 \value{
 A dataframe with the following columns:
