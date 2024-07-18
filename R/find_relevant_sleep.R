@@ -22,7 +22,7 @@ find_relevant_sleep <- function(all_sleep_dat)
     first_last_asleep[, msp := (first_asleep_minute_new + last_asleep_minute_new) / 2]
     first_last_asleep[, median_msp := median(msp),.(person_id)]
     # Recenter over noon (i.e. midnight to midnight), so we can convert to timestamps
-    first_last_asleep[, median_msp := fifelse(median_msp < 0, median_msp + 24*60, median_msp)]
+    first_last_asleep[, median_msp := uncenter(median_msp)]
     first_last_asleep[, median_msp := hms::as_hms(median_msp * 60)]
     # Setup ranges
     # Relevant sleep logs fall within +/- 8 lubridate::hours of the median msp
