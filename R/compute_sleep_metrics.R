@@ -15,6 +15,7 @@
 #'   \item{pct_deep}{Percentage of deep sleep duration. Denominator is the sum of all sleep segment durations whose level is not awake, wake, or restless. If no deep levels exist, then pct_deep is NA.}
 #'   \item{pct_light}{Percentage of light sleep duration. Denominator is the sum of all sleep segment durations whose level is not awake, wake, or restless. If no light levels exist, then pct_light is NA.}
 #'   \item{pct_asleep}{Percentage of asleep sleep levels. Denominator is the sum of all sleep segment durations whose level is not awake, wake, or restless. If no asleep levels exist, then pct_asleep is NA.}
+#'   \item{imputed_awake_duration}{Total duration of all sleep segments whose level is imputed_awake.}
 #'   \item{awake_duration}{Total duration of all sleep segments whose level is awake.}
 #'   \item{wake_duration}{Total duration of all sleep segments whose level is wake.}
 #'   \item{restless_duration}{Total duration of all sleep segments whose level is restless.}
@@ -120,6 +121,7 @@ compute_sleep_metrics <- function(sleep_data)
   
   awake_agg <- sleep_data[,
   .(
+    imputed_awake_duration = fifelse(any(level=="imputed_awake"),sum(duration_in_min[level=="imputed_awake"]),as.double(NA)),
     awake_duration = fifelse(any(level=="awake"),sum(duration_in_min[level=="awake"]),as.double(NA)),
     wake_duration = fifelse(any(level=="wake"),sum(duration_in_min[level=="wake"]),as.double(NA)),
     restless_duration = fifelse(any(level=="restless"),sum(duration_in_min[level=="restless"]),as.double(NA)),
