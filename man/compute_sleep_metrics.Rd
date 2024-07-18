@@ -32,14 +32,19 @@ A dataframe with the following columns:
   \item{pct_restless}{Percentage of restless sleep levels. Denominator is the sum of all sleep segment durations.}
   \item{pct_awake}{Percentage of awake sleep levels. Denominator is the sum of all sleep segment durations.}
   \item{pct_wake}{Percentage of wake sleep levels. Denominator is the sum of all sleep segment durations.}
-  \item{bedtime}{start_datetime of first sleep segment.}
+  \item{bedtime}{start datetime of first sleep segment.}
   \item{waketime}{The end datetime of the final sleep segment.}
   \item{time_in_bed}{Time in bed in minutes. (bedtime - waketime) / 60.}
   \item{num_awakenings}{Number of contiguous sleep segments indcating an awakening. Segments of differing levels will be combined to form a single contiguous sleep segment given the level is one of awake, wake, or restless.}
-  \item{num_long_awakenings}{Number of wake levels >= 30 minutes.}
-  \item{longest_wake_duration}{Longest wake duration in minutes.}
-  \item{wake_after_sleep_onset}{Duration in minutes of contiguous segments of awake, wake, and/or restless following at least one segment of sleep.}
-  \item{wake_to_end_of_log_latency}{Duration in minutes of last awake, wake, or restless segment.}
+  \item{num_long_awakenings}{Count of all contiguous wake, awake, and restless sleep segments >=30 minutes in duration between sleep onset and sleep offset.}
+  \item{longest_wake_duration}{Duration of the longest contiguous period spent awake after sleep onset}
+  \item{wake_after_sleep_onset}{Total duration of all ‘wake’, ‘awake’ and ‘restless’ sleep segments between sleep onset and sleep offset}
+  \item{wake_to_end_of_log_latency}{Time difference in hours between the final awakening to wake time}
+  \item{sleep_efficiency}{Total time spent asleep as a proportion of the primary sleep period. 100 * total_sleep_time / time_in_bed}
+  \item{nap_count}{Number of sleep logs outside of primary sleep period}
+  \item{nap_length}{Total duration of sleep across sleep logs outside of the primary sleep period}
+  \item{sleep_onset_latency}{Time between bedtime and sleep onset}
+  \item{total_sleep_time_24h}{Total duration of sleep for a given calendar date.}
 }
 }
 \description{
