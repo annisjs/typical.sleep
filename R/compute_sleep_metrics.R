@@ -1,6 +1,6 @@
 #' Compute sleep metrics. All metrics are computed for each person_id and date.
-#' @param sleep_data sleep-levels dataset containing the following columns: person_id, date, start_time, level, duration, and is_main_sleep. 
-#' @return A dataframe with the following columns:
+#' @param sleep_data an object returned from as_sleep_logs or typical_sleep
+#' @return A dataframe with the following columns (by person_id and date):
 #' \describe{
 #'   \item{sleep_onset}{The start datetime of the first sleep segment, where sleep segment levels are not wake, awake, or restless.}
 #'   \item{sleep_offset}{The end datetime of the last sleep segment, where sleep segment levels are not wake, awake, or restless. The end datetime is computed by adding sleep duration to start_datetime.}

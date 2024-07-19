@@ -1,4 +1,4 @@
-#' Parses the JSON object returned from the Fitbit API
+#' Parses the JSON object returned from Google Takeout
 #' @param input_file the Fitbit JSON object
 #' @param person_id optional person ID. Default is 1.
 #' @export

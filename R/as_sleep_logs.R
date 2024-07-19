@@ -1,5 +1,5 @@
 #' Prepares raw data for later processing
-#' @param all_sleep_dat  sleep-levels dataset. Only the person_id and start_time are needed, but the full dataset is usually passed in containing \cr
+#' @param all_sleep_dat  sleep-levels dataset. Only the person_id and start_datetime are needed, but the full dataset is usually passed in containing \cr
 #' person_id, sleep_date, start_datetime, levels, duration_in_min, and is_main_sleep.
 #' @export
 #' @import data.table

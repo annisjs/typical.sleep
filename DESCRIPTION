@@ -4,11 +4,7 @@ Title: Finds the typical sleep period for Fitbit sleep data
 Version: 0.1.0
 Author: Jeffrey Annis
 Maintainer: Jeffrey Annis <jeffrey.s.annis@vumc.org>
-Description: Finds the typical sleep period in three steps: 
-    1. Finds relevant sleep logs are those that fall within +/-8 hours of the midsleep point. 
-    2. Determines the median bedtime and waketime from the relevant logs.
-    3. Labels each sleep log as either part of the typical sleep period or not by filtering out those
-    that are outside of the bedtime/waketime interval.
+Description: TODO: Describe the package
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
