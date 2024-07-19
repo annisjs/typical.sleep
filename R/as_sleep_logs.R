@@ -27,6 +27,6 @@ as_sleep_logs <- function(all_sleep_dat)
     all_sleep_dat[, end_datetime_lead := NULL]
     all_sleep_dat[, start_time_lag := NULL]
     all_sleep_dat[, diff := NULL]
-    setattr(all_sleep_dat,"format","log")
+    all_sleep_dat <- structure(list(sleep_data=all_sleep_dat),class="sleep_logs")
     return(all_sleep_dat)
 }

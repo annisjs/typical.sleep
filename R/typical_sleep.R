@@ -8,22 +8,21 @@
 #'
 #' @export
 #' @import data.table
-typical_sleep <- function(sleep_data)
+typical_sleep <- function(sleep_data) UseMethod("typical_sleep",sleep_data)
+
+#' @export 
+typical_sleep.sleep_logs <- function(sleep_data)
 {
-  if (is.null(attr(sleep_data,"format")))
-  {
-    stop("Not a sleep_logs object. Run as_sleep_logs() on dataset first.")
-  }
-  sleep_data <- find_relevant_sleep(sleep_data)
-  sleep_data <- .tsp(sleep_data)
+  dt <- sleep_data$sleep_data
+  dt <- find_relevant_sleep(dt)
+  dt <- .tsp(dt)
   # Return column names to original
-  setnames(sleep_data,"date_new","typical_sleep_date")
-  sleep_data <- sleep_data[,c("person_id","sleep_date","start_datetime","level","duration_in_min",
-  "is_main_sleep","sleep_log","start_datetime_log","end_time_log","typical_sleep_date","is_typical_sleep",
-  "median_msp","median_sleep_start","median_sleep_end")]
-  setattr(sleep_data,"sleep_type","typical")
-  setattr(sleep_data,"format","log")
-  return(sleep_data)
+  setnames(dt,"date_new","typical_sleep_date")
+  algo_data <- dt[,c("person_id","typical_sleep_date","median_msp","median_sleep_start","median_sleep_end")]
+  dt <- dt[,c("person_id","sleep_date","start_datetime","level","duration_in_min",
+  "is_main_sleep","sleep_log","start_datetime_log","end_time_log","typical_sleep_date","is_typical_sleep")]
+  dt <- structure(list(sleep_data=dt,algorithm_data=algo_data),class="typical_sleep")
+  return(dt)
 }
 
 #' Typical sleep algorithm
