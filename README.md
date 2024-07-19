@@ -11,10 +11,10 @@ devtools::install_github("annisjs/typical.sleep")
 ```r
 library(typical.sleep)
 # Assuming dat is a data.table that shares the same schema as the sleep_level table in AoU.
-dat <- as_sleep_logs(dat)
-sleep_metrics <- compute_sleep_metrics(dat) # Metrics reflect main sleep period
-dat <- typical_sleep(dat)
-tsp_metrics <- compute_sleep_metrics(dat) # Metrics reflect typical sleep period
+sleep_logs <- as_sleep_logs(dat)
+sleep_metrics <- compute_sleep_metrics(sleep_logs) # Metrics reflect main sleep period
+typical_sleep_logs <- typical_sleep(sleep_logs)
+tsp_metrics <- compute_sleep_metrics(typical_sleep_logs) # Metrics reflect typical sleep period
 ```
 
 The package can also handle direct exports from Fitbit. 
