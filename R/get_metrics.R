@@ -9,7 +9,7 @@ get_metrics <- function(sleep_data,date_col)
   sleep_data[, end_time := start_datetime + lubridate::seconds(duration_in_min * 60)]
   sleep_data[, sleep_start_new := center(time_to_minute(start_datetime))]
   sleep_data[, sleep_end_new := center(time_to_minute(end_time))]
-  sleep_data <- add_wakes(sleep_data,date_col)
+  sleep_data <- add_wake_vars(sleep_data,date_col)
   sleep_data <- add_long_wake_vars(sleep_data,date_col)
   
   sleep_agg <- sleep_data[!level %in% AWAKE_LEVELS(),

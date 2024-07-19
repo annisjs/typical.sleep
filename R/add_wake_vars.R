@@ -2,7 +2,7 @@
 #' @param sleep_data the sleep_data element from either a sleep logs or typical sleep object
 #' @param date_col string, either "typical_sleep_date" or "sleep_date"
 #' @noRd
-add_wakes <- function(sleep_data,date_col)
+add_wake_vars <- function(sleep_data,date_col)
 {
     # The following creates variables to help compute wake metrics
     # Identify all wake levels
