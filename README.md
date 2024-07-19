@@ -10,6 +10,7 @@ devtools::install_github("annisjs/typical.sleep")
 # Usage
 ```r
 library(typical.sleep)
+
 # Assuming dat is a data.table that shares the same schema as the sleep_level table in AoU.
 sleep_logs <- as_sleep_logs(dat)
 typical_sleep_logs <- typical_sleep(sleep_logs)
