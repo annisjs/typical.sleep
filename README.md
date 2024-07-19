@@ -15,8 +15,8 @@ sleep_logs <- as_sleep_logs(dat)
 typical_sleep_logs <- typical_sleep(sleep_logs)
 
 # Compute metrics from logs
-sleep_metrics <- compute_sleep_metrics(sleep_logs) # Metrics reflect main sleep period
-tsp_metrics <- compute_sleep_metrics(typical_sleep_logs) # Metrics reflect typical sleep period
+sleep_metrics <- compute_sleep_metrics(sleep_logs)
+tsp_metrics <- compute_sleep_metrics(typical_sleep_logs)
 ```
 
 The package can also handle direct exports from Fitbit. 
