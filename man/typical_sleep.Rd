@@ -11,13 +11,9 @@ typical_sleep(sleep_data)
 This is the default schema from the All of Us sleep_levels table.}
 }
 \value{
-Returns the original data with two appended columns, sleep_date_new and tsp. sleep_date_new is the recomputed date of sleep based on the typical sleep period. \cr
-tsp is TRUE if the sleep log falls within the typical sleep period. Otherwise, it is false.
+a typical sleep object
 }
 \description{
-The typical sleep period is computed in three steps: 
-   1. Finds relevant sleep logs are those that fall within +/-8 hours of the midsleep point. 
-   2. Determines the median bedtime and waketime from the relevant logs.
-   3. Labels each sleep log as either part of the typical sleep period or not by filtering out those
-   that are outside of the bedtime/waketime interval.
+The typical sleep algorithm returns a typical sleep object that contains the original data plus inserted awake levels and additioanl columns.
+The additional columns are the result of the typical sleep algorithm: typical_sleep_date, is_typical_sleep, median_msp, median_sleep_start, median_sleep_end
 }

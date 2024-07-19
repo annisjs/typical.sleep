@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse_fitbit_json.R
 \name{parse_fitbit_json}
 \alias{parse_fitbit_json}
-\title{Parses the JSON object returned from the Fitbit API}
+\title{Parses the JSON object returned from Google Takeout}
 \usage{
 parse_fitbit_json(input_file, person_id = 1)
 }
@@ -12,5 +12,5 @@ parse_fitbit_json(input_file, person_id = 1)
 \item{person_id}{optional person ID. Default is 1.}
 }
 \description{
-Parses the JSON object returned from the Fitbit API
+Parses the JSON object returned from Google Takeout
 }
