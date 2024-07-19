@@ -36,10 +36,8 @@ run_tsp <- function(all_sleep_dat)
                                     .(start_datetime_log = start_datetime_log[1],
                                       end_time_log = end_time_log[.N]),
                                     .(person_id,date_new)]
-    first_last_asleep[, first_asleep_minute := time_to_minute(start_datetime_log)]
-    first_last_asleep[, last_asleep_minute := time_to_minute(end_time_log)]
-    first_last_asleep[, last_asleep_minute_new := center(last_asleep_minute)]
-    first_last_asleep[, first_asleep_minute_new := center(first_asleep_minute)]
+    first_last_asleep[, first_asleep_minute_new := center(time_to_minute(start_datetime_log))]
+    first_last_asleep[, last_asleep_minute_new := center(time_to_minute(end_time_log))]
     first_last_asleep[, median_sleep_start := median(first_asleep_minute_new),.(person_id)]
     first_last_asleep[, median_sleep_end := median(last_asleep_minute_new),.(person_id)]
     first_last_asleep[, msp := (first_asleep_minute_new + last_asleep_minute_new) / 2]
