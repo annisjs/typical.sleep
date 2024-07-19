@@ -12,8 +12,10 @@ devtools::install_github("annisjs/typical.sleep")
 library(typical.sleep)
 # Assuming dat is a data.table that shares the same schema as the sleep_level table in AoU.
 sleep_logs <- as_sleep_logs(dat)
-sleep_metrics <- compute_sleep_metrics(sleep_logs) # Metrics reflect main sleep period
 typical_sleep_logs <- typical_sleep(sleep_logs)
+
+# Compute metrics from logs
+sleep_metrics <- compute_sleep_metrics(sleep_logs) # Metrics reflect main sleep period
 tsp_metrics <- compute_sleep_metrics(typical_sleep_logs) # Metrics reflect typical sleep period
 ```
 
