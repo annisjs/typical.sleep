@@ -44,7 +44,6 @@ run_tsp <- function(all_sleep_dat)
     first_last_asleep[, median_msp := median(msp),.(person_id)]
     first_last_asleep_ranges <- first_last_asleep[, c("person_id","median_sleep_start","median_sleep_end","start_datetime_log","median_msp")]
     first_last_asleep_ranges <- first_last_asleep_ranges[!duplicated(first_last_asleep_ranges)]
-    setkey(all_sleep_dat, person_id, start_datetime_log, end_time_log)
     first_last_asleep_ranges[, bt_wt_by_msp := median_sleep_end - median_sleep_start <= 300]
     first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_start := median_msp - 3.5*60]
     first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_end := median_msp + 3.5*60]
