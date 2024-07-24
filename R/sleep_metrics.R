@@ -13,14 +13,10 @@
 #'   \item{pct_rem}{Percentage of rem sleep duration. Denominator is the sum of all sleep segment durations whose level is not awake, wake, or restless. If no rem levels exist, then pct_rem is NA.}
 #'   \item{pct_deep}{Percentage of deep sleep duration. Denominator is the sum of all sleep segment durations whose level is not awake, wake, or restless. If no deep levels exist, then pct_deep is NA.}
 #'   \item{pct_light}{Percentage of light sleep duration. Denominator is the sum of all sleep segment durations whose level is not awake, wake, or restless. If no light levels exist, then pct_light is NA.}
-#'   \item{pct_asleep}{Percentage of asleep sleep levels. Denominator is the sum of all sleep segment durations whose level is not awake, wake, or restless. If no asleep levels exist, then pct_asleep is NA.}
 #'   \item{imputed_awake_duration}{Total duration of all sleep segments whose level is imputed_awake.}
 #'   \item{awake_duration}{Total duration of all sleep segments whose level is awake.}
 #'   \item{wake_duration}{Total duration of all sleep segments whose level is wake.}
 #'   \item{restless_duration}{Total duration of all sleep segments whose level is restless.}
-#'   \item{pct_restless}{Percentage of restless sleep levels. Denominator is the sum of all sleep segment durations.}
-#'   \item{pct_awake}{Percentage of awake sleep levels. Denominator is the sum of all sleep segment durations.}
-#'   \item{pct_wake}{Percentage of wake sleep levels. Denominator is the sum of all sleep segment durations.}
 #'   \item{bedtime}{start datetime of first sleep log.}
 #'   \item{waketime}{The end datetime of the final sleep log.}
 #'   \item{time_in_bed}{Time in bed in minutes. (bedtime - waketime) / 60.}
@@ -48,10 +44,10 @@
 #' print(tsp_metrics)
 #'}
 #' 
-sleep_metrics <- function(sleep_data) UseMethod("sleep_metrics",sleep_data)
+get_sleep_metrics <- function(sleep_data) UseMethod("get_sleep_metrics",sleep_data)
 
 #' @export
-sleep_metrics.sleep_logs <- function(sleep_data)
+get_sleep_metrics.sleep_logs <- function(sleep_data)
 {
   dt <- sleep_data$sleep_data
   date_col <- "sleep_date"
@@ -63,7 +59,7 @@ sleep_metrics.sleep_logs <- function(sleep_data)
 }
 
 #' @export
-sleep_metrics.typical_sleep <- function(sleep_data)
+get_sleep_metrics.typical_sleep <- function(sleep_data)
 {
   dt <- sleep_data$sleep_data
   date_col <- "typical_sleep_date"
