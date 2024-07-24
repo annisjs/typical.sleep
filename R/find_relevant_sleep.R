@@ -44,8 +44,8 @@ find_relevant_sleep <- function(all_sleep_dat)
     # Correction: If datetime(x2_obs) - datetime(x1) != numeric(x2_obs) - numeric(x1), then x2_obs + 1440 = x2_act
     first_last_asleep[, diff_time := last_asleep_minute_new - first_asleep_minute_new]
     first_last_asleep[, diff_datetime := lubridate::interval(
-                                         lubridate::as_datetime(first_asleep_minute_new),
-                                         lubridate::as_datetime(last_asleep_minute_new))/lubridate::minutes(1)]
+                                         lubridate::as_datetime(start_datetime),
+                                         lubridate::as_datetime(end_time))/lubridate::minutes(1)]
     first_last_asleep[diff_time != diff_datetime, last_asleep_minute_new := last_asleep_minute_new + 1440]
     # Compute the MSP
     first_last_asleep[, msp := (first_asleep_minute_new + last_asleep_minute_new) / 2]

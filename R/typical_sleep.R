@@ -18,7 +18,7 @@ typical_sleep.sleep_logs <- function(sleep_data)
   dt <- run_tsp(dt)
   # Return column names to original
   setnames(dt,"date_new","typical_sleep_date")
-  algo_data <- dt[,c("person_id","median_msp","median_sleep_start","median_sleep_end","bt_wt_by_msp")]
+  algo_data <- dt[,c("person_id","median_msp","median_sleep_start","median_sleep_end","bt_wt_by_msp","bedtime_gt_waketime")]
   algo_data <- algo_data[!duplicated(algo_data)]
   dt <- dt[,c("person_id","sleep_date","start_datetime","level","duration_in_min",
               "is_main_sleep","sleep_log","start_datetime_log","end_time_log","typical_sleep_date","is_typical_sleep")]
@@ -40,8 +40,9 @@ run_tsp <- function(all_sleep_dat)
     first_last_asleep[, last_asleep_minute_new := center(time_to_minute(end_time_log))]
     first_last_asleep[, diff_time := last_asleep_minute_new - first_asleep_minute_new]
     first_last_asleep[, diff_datetime := lubridate::interval(
-                                         lubridate::as_datetime(first_asleep_minute_new),
-                                         lubridate::as_datetime(last_asleep_minute_new))/lubridate::minutes(1)]
+                                         lubridate::as_datetime(start_datetime_log),
+                                         lubridate::as_datetime(end_time_log))/lubridate::minutes(1)]
+    data.table::fwrite(first_last_asleep,"test.csv")
     first_last_asleep[diff_time != diff_datetime, last_asleep_minute_new := last_asleep_minute_new + 1440]
     first_last_asleep[, median_sleep_start := median(first_asleep_minute_new),.(person_id)]
     first_last_asleep[, median_sleep_end := median(last_asleep_minute_new),.(person_id)]
@@ -50,6 +51,7 @@ run_tsp <- function(all_sleep_dat)
     first_last_asleep_ranges <- first_last_asleep[, c("person_id","median_sleep_start","median_sleep_end","start_datetime_log","median_msp")]
     first_last_asleep_ranges <- first_last_asleep_ranges[!duplicated(first_last_asleep_ranges)]
     first_last_asleep_ranges[, bt_wt_by_msp := median_sleep_end - median_sleep_start <= 300]
+    first_last_asleep_ranges[, bedtime_gt_waketime := median_sleep_start > median_sleep_end]
     first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_start := median_msp - 3.5*60]
     first_last_asleep_ranges[bt_wt_by_msp == TRUE, median_sleep_end := median_msp + 3.5*60]
     first_last_asleep_ranges[, tsp_median_sleep_start := median_sleep_start]
@@ -71,7 +73,7 @@ run_tsp <- function(all_sleep_dat)
     all_sleep_dat[dt_overlaps$xid, is_typical_sleep := TRUE]
     all_sleep_dat[dt_overlaps$xid, date_new := lubridate::as_date(dt_overlaps$date)]
     all_sleep_dat <- insert_wake_levels(all_sleep_dat)
-    median_msp_dt <- first_last_asleep_ranges[,c("person_id","median_msp","bt_wt_by_msp")]
+    median_msp_dt <- first_last_asleep_ranges[,c("person_id","median_msp","bt_wt_by_msp","bedtime_gt_waketime")]
     median_msp_dt <- median_msp_dt[!duplicated(person_id)]
     median_msp_dt[, median_msp := hms::as_hms(uncenter(median_msp) * 60)]
     median_bt_wt <- first_last_asleep_ranges[,c("person_id","tsp_median_sleep_start","tsp_median_sleep_end")]
