@@ -13,11 +13,11 @@ library(typical.sleep)
 
 # Assuming dat is a data.table that shares the same schema as the sleep_level table in AoU.
 sleep_logs <- as_sleep_logs(dat)
-typical_sleep_logs <- typical_sleep(sleep_logs)
+typical_sleep_logs <- find_typical_sleep(sleep_logs)
 
 # Compute metrics from logs
-sleep_metrics <- sleep_metrics(sleep_logs)
-tsp_metrics <- sleep_metrics(typical_sleep_logs)
+sleep_metrics <- get_sleep_metrics(sleep_logs)
+tsp_metrics <- get_sleep_metrics(typical_sleep_logs)
 ```
 
 The package can also handle direct exports from Fitbit. 
@@ -25,7 +25,7 @@ The package can also handle direct exports from Fitbit.
 ```r
 json_test_data <- parse_fitbit_json("my-sleep-data.json")
 dat <- as_sleep_logs(json_test_data)
-dat <- typical_sleep(dat)
+dat <- find_typical_sleep(dat)
 ```
 # The typical sleep algorithm
 Finds the typical sleep period in three steps: 

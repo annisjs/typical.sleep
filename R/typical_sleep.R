@@ -8,10 +8,10 @@
 #'
 #' @export
 #' @import data.table
-typical_sleep <- function(sleep_data) UseMethod("typical_sleep",sleep_data)
+find_typical_sleep <- function(sleep_data) UseMethod("find_typical_sleep",sleep_data)
 
 #' @export 
-typical_sleep.sleep_logs <- function(sleep_data)
+find_typical_sleep.sleep_logs <- function(sleep_data)
 {
   dt <- sleep_data$sleep_data
   dt <- find_relevant_sleep(dt)

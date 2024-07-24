@@ -44,10 +44,10 @@
 #' print(tsp_metrics)
 #'}
 #' 
-sleep_metrics <- function(sleep_data) UseMethod("sleep_metrics",sleep_data)
+get_sleep_metrics <- function(sleep_data) UseMethod("get_sleep_metrics",sleep_data)
 
 #' @export
-sleep_metrics.sleep_logs <- function(sleep_data)
+get_sleep_metrics.sleep_logs <- function(sleep_data)
 {
   dt <- sleep_data$sleep_data
   date_col <- "sleep_date"
@@ -59,7 +59,7 @@ sleep_metrics.sleep_logs <- function(sleep_data)
 }
 
 #' @export
-sleep_metrics.typical_sleep <- function(sleep_data)
+get_sleep_metrics.typical_sleep <- function(sleep_data)
 {
   dt <- sleep_data$sleep_data
   date_col <- "typical_sleep_date"
