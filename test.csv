@@ -1,3 +1,0 @@
-person_id,date_new,start_datetime_log,end_time_log,first_asleep_minute_new,last_asleep_minute_new,diff_time,diff_datetime
-1,2023-04-03,2023-04-02T21:54:30Z,2023-04-03T05:48:30Z,-125.5,348.5,474,474
-1,2023-04-04,2023-04-03T23:00:00Z,2023-04-04T06:21:30Z,-60,381.5,441.5,441.5

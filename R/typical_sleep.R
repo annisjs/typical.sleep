@@ -42,7 +42,6 @@ run_tsp <- function(all_sleep_dat)
     first_last_asleep[, diff_datetime := lubridate::interval(
                                          lubridate::as_datetime(start_datetime_log),
                                          lubridate::as_datetime(end_time_log))/lubridate::minutes(1)]
-    data.table::fwrite(first_last_asleep,"test.csv")
     first_last_asleep[diff_time != diff_datetime, last_asleep_minute_new := last_asleep_minute_new + 1440]
     first_last_asleep[, median_sleep_start := median(first_asleep_minute_new),.(person_id)]
     first_last_asleep[, median_sleep_end := median(last_asleep_minute_new),.(person_id)]
