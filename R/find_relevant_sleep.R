@@ -18,6 +18,35 @@ find_relevant_sleep <- function(all_sleep_dat)
     first_last_asleep[, last_asleep_minute := time_to_minute(end_time)]
     first_last_asleep[, last_asleep_minute_new := center(last_asleep_minute)]
     first_last_asleep[, first_asleep_minute_new := center(first_asleep_minute)]
+    # Order violating edge-cases
+    # 1. Noon-crossing
+    #     12PM ==x2_obs==== 12AM ========x1====== 12PM =====x2_act======= 12AM
+    #     ------------------- +++++++++++++++++++++ ----------------------- 
+    # 2. Hypersomnia cases
+    #     1a.
+    #      12PM ==x2_obs==x1==== 12AM ============== 12PM ======x2_act==== 12AM
+    #      ----------------------- ++++++++++++++++++++ ----------------------
+    #     1b.
+    #      12PM =========== 12AM =====x2_obs==x1===== 12PM ========== 12AM =====x2_act==== 12PM 
+    #      ------------------ +++++++++++++++++++++++++ --------------- +++++++++++++++++++++
+    #  Correction: If datetime(x2_obs) - datetime(x1) != numeric(x2_obs) - numeric(x1), then x2_obs + 1440 = x2_act
+    # Order preserving edge-cases
+    # 1. Hypersomnia
+    #   1a. 
+    #     12PM ==x1===x2_obs=== 12AM ============== 12PM =====x2_act===== 12AM
+    #     ----------------------- +++++++++++++++++++ ----------------------
+    #   2b. 
+    #     12PM ======== 12AM =x1====x2_obs== 12PM ============ 12AM ====x2_act=== 12PM
+    #     --------------- +++++++++++++++++++++ ---------------- +++++++++++++++++++
+    #   2c.
+    #     12PM ====x1== 12AM =======x2_obs== 12PM =========== 12AM ======x2_act== 12PM
+    #     --------------- ++++++++++++++++++++++++ ------------- +++++++++++++++++++
+    # Correction: If datetime(x2_obs) - datetime(x1) != numeric(x2_obs) - numeric(x1), then x2_obs + 1440 = x2_act
+    first_last_asleep[, diff_time := last_asleep_minute_new - first_asleep_minute_new]
+    first_last_asleep[, diff_datetime := lubridate::interval(
+                                         lubridate::as_datetime(first_asleep_minute_new),
+                                         lubridate::as_datetime(last_asleep_minute_new))/lubridate::minutes(1)]
+    first_last_asleep[diff_time != diff_datetime, last_asleep_minute_new := last_asleep_minute_new + 1440]
     # Compute the MSP
     first_last_asleep[, msp := (first_asleep_minute_new + last_asleep_minute_new) / 2]
     first_last_asleep[, median_msp := median(msp),.(person_id)]
