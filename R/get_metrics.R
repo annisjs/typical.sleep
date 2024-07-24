@@ -23,10 +23,9 @@ get_metrics <- function(sleep_data,date_col)
     deep_duration = fifelse(any(level=="deep"),sum(duration_in_min[level=="deep"]),as.double(NA)),
     light_duration = fifelse(any(level=="light"),sum(duration_in_min[level=="light"]),as.double(NA)),
     asleep_duration = fifelse(any(level=="asleep"),sum(duration_in_min[level=="asleep"]),as.double(NA)), 
-    pct_rem = fifelse(any(level=="rem"),sum(duration_in_min[level=="rem"])/sum(duration_in_min),as.double(NA)),
-    pct_deep = fifelse(any(level=="deep"),sum(duration_in_min[level=="deep"])/sum(duration_in_min),as.double(NA)),
-    pct_light = fifelse(any(level=="light"),sum(duration_in_min[level=="light"])/sum(duration_in_min),as.double(NA)),
-    pct_asleep = fifelse(any(level=="asleep"),sum(duration_in_min[level=="asleep"])/sum(duration_in_min),as.double(NA))
+    pct_rem = fifelse(any(level=="rem"),100*sum(duration_in_min[level=="rem"])/sum(duration_in_min),as.double(NA)),
+    pct_deep = fifelse(any(level=="deep"),100*sum(duration_in_min[level=="deep"])/sum(duration_in_min),as.double(NA)),
+    pct_light = fifelse(any(level=="light"),100*sum(duration_in_min[level=="light"])/sum(duration_in_min),as.double(NA))
    ),
   by=c("person_id",date_col)]
   
@@ -39,9 +38,6 @@ get_metrics <- function(sleep_data,date_col)
     awake_duration = fifelse(any(level=="awake"),sum(duration_in_min[level=="awake"]),as.double(NA)),
     wake_duration = fifelse(any(level=="wake"),sum(duration_in_min[level=="wake"]),as.double(NA)),
     restless_duration = fifelse(any(level=="restless"),sum(duration_in_min[level=="restless"]),as.double(NA)),
-    pct_restless = fifelse(any(level=="restless"),sum(duration_in_min[level=="restless"])/sum(duration_in_min),as.double(NA)),
-    pct_awake = fifelse(any(level=="awake"),sum(duration_in_min[level=="awake"])/sum(duration_in_min),as.double(NA)),
-    pct_wake = fifelse(any(level=="wake"),sum(duration_in_min[level=="wake"])/sum(duration_in_min),as.double(NA)),
     bedtime = start_datetime[1],
     waketime = end_time[.N],
     time_in_bed = as.numeric(end_time[.N] - start_datetime[1]) / 60,
