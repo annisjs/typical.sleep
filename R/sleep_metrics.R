@@ -78,7 +78,7 @@ get_sleep_metrics.typical_sleep <- function(sleep_data)
 add_naps <- function(out,nap_agg,date_col)
 {
   # Add naps
-  out <- merge(out,nap_agg,by=c("person_id",date_col),all.x=T)
+  out <- merge(out,nap_agg,by=c("person_id",date_col),all.x=T,all.y=T)
   out[, nap_count := fifelse(is.na(nap_count),0,nap_count)]
   out[, nap_length := fifelse(is.na(nap_length),0,nap_length)]
   return(out)
