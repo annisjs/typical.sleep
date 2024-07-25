@@ -61,12 +61,16 @@ run_tsp <- function(all_sleep_dat)
     first_last_asleep_ranges[, median_sleep_end2 := median_sleep_end1 + lubridate::days(1)]
     first_last_asleep_ranges[, median_sleep_start3 := median_sleep_start1 - lubridate::days(1)]
     first_last_asleep_ranges[, median_sleep_end3 := median_sleep_end1 - lubridate::days(1)]
+    fl_melt1 <- first_last_asleep_ranges[,c("person_id","median_sleep_start1","median_sleep_end1")]
+    fl_melt2 <- first_last_asleep_ranges[,c("person_id","median_sleep_start2","median_sleep_end2")]
+    fl_melt3 <- first_last_asleep_ranges[,c("person_id","median_sleep_start3","median_sleep_end3")]
+    colnames(fl_melt1) <- c("person_id","median_sleep_start","median_sleep_end")
+    colnames(fl_melt2) <- c("person_id","median_sleep_start","median_sleep_end")
+    colnames(fl_melt3) <- c("person_id","median_sleep_start","median_sleep_end")
+    ranges <- rbindlist(list(fl_melt1,fl_melt2,fl_melt3))
+    ranges <- ranges[!duplicated(ranges)]
     setkey(all_sleep_dat, person_id, start_datetime_log, end_time_log)
-    dt_overlaps <- rbindlist(lapply(1:3,function(x)
-                    find_overlaps(all_sleep_dat,
-                                first_last_asleep_ranges, 
-                                paste0("median_sleep_start",x),
-                                paste0("median_sleep_end",x))))
+    dt_overlaps <- find_overlaps(all_sleep_dat,ranges,"median_sleep_start","median_sleep_end")
     dt_overlaps <- dt_overlaps[!duplicated(dt_overlaps[,c("xid")])]
     all_sleep_dat[, is_typical_sleep := FALSE]
     all_sleep_dat[dt_overlaps$xid, is_typical_sleep := TRUE]
