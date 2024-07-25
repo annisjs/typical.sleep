@@ -65,17 +65,17 @@ find_relevant_sleep <- function(all_sleep_dat)
     first_last_asleep[, range_begin3 := range_begin1 - lubridate::days(1)]
     first_last_asleep[, range_end3 := range_end1 - lubridate::days(1)]
     # Get the range data computed from the MSP
-    first_last_asleep_ranges <- first_last_asleep[, c("person_id","range_begin1","range_end1",
-                                                    "range_begin2","range_end2",
-                                                    "range_begin3","range_end3")]
+    fl_melt1 <- first_last_asleep[,c("person_id","range_begin1","range_end1")]
+    fl_melt2 <- first_last_asleep[,c("person_id","range_begin2","range_end2")]
+    fl_melt3 <- first_last_asleep[,c("person_id","range_begin3","range_end3")]
+    colnames(fl_melt1) <- c("person_id","range_begin","range_end")
+    colnames(fl_melt2) <- c("person_id","range_begin","range_end")
+    colnames(fl_melt3) <- c("person_id","range_begin","range_end")
+    first_last_asleep_ranges <- rbindlist(list(fl_melt1,fl_melt2,fl_melt3))
     first_last_asleep_ranges <- first_last_asleep_ranges[!duplicated(first_last_asleep_ranges)]
     # Find all overlapping sleep logs within +/- 8 lubridate::hours of the MSP
     setkey(all_sleep_dat, person_id, start_datetime_log, end_time_log)
-    dt_overlaps <- rbindlist(lapply(1:3,function(x)
-                    find_overlaps(all_sleep_dat,
-                                  first_last_asleep_ranges, 
-                                  paste0("range_begin",x),
-                                  paste0("range_end",x))))
+    dt_overlaps <- find_overlaps(all_sleep_dat,first_last_asleep_ranges,"range_begin","range_end")
     dt_overlaps <- dt_overlaps[!duplicated(dt_overlaps[,c("xid")])]
     # Keep relevant sleep logs overlapping with MSP +/-8 lubridate::hours
     all_sleep_dat[, msp := FALSE]
