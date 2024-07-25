@@ -1,4 +1,4 @@
-#' Imputes wakes after logs are stitched together
+#' Adds variables used to compute wake metrics
 #' @param sleep_data the sleep_data element from either a sleep logs or typical sleep object
 #' @param date_col string, either "typical_sleep_date" or "sleep_date"
 #' @noRd
