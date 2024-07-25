@@ -17,7 +17,7 @@ get_metrics <- function(sleep_data,date_col)
     sleep_onset = start_datetime[1],
     sleep_offset = end_time[.N],
     sleep_duration = as.numeric(end_time[.N] - start_datetime[1])/60,
-    midsleep_point = hms::as_hms(((sleep_start_new[1] + sleep_end_new[.N]) / 2) * 60),
+    midsleep_point = hms::as_hms(uncenter(((sleep_start_new[1] + sleep_end_new[.N]) / 2)) * 60),
     total_sleep_time = sum(duration_in_min),
     rem_duration = fifelse(any(level=="rem"),sum(duration_in_min[level=="rem"]),as.double(NA)),
     deep_duration = fifelse(any(level=="deep"),sum(duration_in_min[level=="deep"]),as.double(NA)),

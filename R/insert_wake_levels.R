@@ -8,7 +8,7 @@ insert_wake_levels <- function(all_sleep_dat)
     # Insert wakes
     # Add wake between levels
     # Create variable that holds end_time i - 1
-    tsp_dat[, end_time_lead_day := shift(end_time,1),.(person_id,date_new)]
+    tsp_dat[, end_time_lead_day := shift(end_time,1),.(person_id,date_tsp)]
     # Get the difference between start_time and end_time i - 1
     tsp_dat[, lead_diff := as.numeric(start_datetime - end_time_lead_day) / 60]
     # Differences > 0 indicate a gap in the sleep logs

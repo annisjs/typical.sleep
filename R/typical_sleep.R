@@ -17,7 +17,8 @@ find_typical_sleep.sleep_logs <- function(sleep_data)
   dt <- find_relevant_sleep(dt)
   dt <- run_tsp(dt)
   # Return column names to original
-  setnames(dt,"date_new","typical_sleep_date")
+  setnames(dt,"date_tsp","typical_sleep_date")
+  setnames(dt,"date_new","relevant_log_date")
   algo_data <- dt[,c("person_id","median_msp","median_sleep_start","median_sleep_end","bt_wt_by_msp","bedtime_gt_waketime")]
   algo_data <- algo_data[!duplicated(algo_data)]
   dt <- dt[,c("person_id","sleep_date","start_datetime","level","duration_in_min",
@@ -74,7 +75,7 @@ run_tsp <- function(all_sleep_dat)
     dt_overlaps <- dt_overlaps[!duplicated(dt_overlaps[,c("xid")])]
     all_sleep_dat[, is_typical_sleep := FALSE]
     all_sleep_dat[dt_overlaps$xid, is_typical_sleep := TRUE]
-    all_sleep_dat[dt_overlaps$xid, date_new := lubridate::as_date(dt_overlaps$date)]
+    all_sleep_dat[dt_overlaps$xid, date_tsp := lubridate::as_date(dt_overlaps$date)]
     all_sleep_dat <- insert_wake_levels(all_sleep_dat)
     median_msp_dt <- first_last_asleep_ranges[,c("person_id","median_msp","bt_wt_by_msp","bedtime_gt_waketime")]
     median_msp_dt <- median_msp_dt[!duplicated(person_id)]
