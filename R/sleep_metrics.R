@@ -62,11 +62,11 @@ get_sleep_metrics.sleep_logs <- function(sleep_data)
 get_sleep_metrics.typical_sleep <- function(sleep_data)
 {
   dt <- sleep_data$sleep_data
-  date_col <- "typical_sleep_date"
-  nap_agg <- get_naps(dt,date_col,"relevant_log_date")
+  nap_agg <- get_naps(dt,"sleep_date","is_typical_sleep")
   dt <- dt[is_typical_sleep == TRUE]
-  metrics <- get_metrics(dt,date_col)
-  metrics <- add_naps(metrics,nap_agg,date_col)
+  metrics <- get_metrics(dt,"typical_sleep_date")
+  nap_agg[, typical_sleep_date := sleep_date]
+  metrics <- add_naps(metrics,nap_agg,"typical_sleep_date")
   return(metrics)
 }
 
