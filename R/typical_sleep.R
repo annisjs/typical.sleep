@@ -22,7 +22,7 @@ find_typical_sleep.sleep_logs <- function(sleep_data)
   algo_data <- dt[,c("person_id","median_msp","median_sleep_start","median_sleep_end","bt_wt_by_msp","bedtime_gt_waketime")]
   algo_data <- algo_data[!duplicated(algo_data)]
   dt <- dt[,c("person_id","sleep_date","start_datetime","level","duration_in_min",
-              "is_main_sleep","sleep_log","start_datetime_log","end_time_log","relevant_log_date","typical_sleep_date","is_typical_sleep")]
+              "is_main_sleep","sleep_log","start_datetime_log","end_time_log","typical_sleep_date","is_typical_sleep")]
   dt <- structure(list(sleep_data=dt,algorithm_data=algo_data),class="typical_sleep")
   return(dt)
 }
