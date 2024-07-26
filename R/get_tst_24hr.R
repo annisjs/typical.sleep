@@ -1,9 +1,14 @@
 #' Function for computing 24hr sleep duration. Not exported.
 #' @param all_sleep_dat Dataset containing sleep segments. Must contain person_id, is_main_sleep, date_col, level, and start_datetime.
+#' @param get_naps logical indicating whether to compute naps occurring during calendar date
 #' @return dataframe with person_id, date_col, nap_count, and nap_length
 #' @noRd 
-get_tst_24hr <- function(all_sleep_date){
-    dt <- all_sleep_date[!level %in% AWAKE_LEVELS()]
+get_tst_24hr <- function(all_sleep_dat,get_naps=FALSE){
+    if (get_naps)
+    {
+        all_sleep_dat <- all_sleep_dat[is_main_sleep == FALSE]
+    }
+    dt <- all_sleep_dat[!level %in% AWAKE_LEVELS()]
     dt[, end := start_datetime + lubridate::seconds(duration_in_min * 60)]
     dt[, start_date := lubridate::as_date(start_datetime)]
     dt[, end_date :=  lubridate::as_date(end)]

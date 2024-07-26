@@ -2,7 +2,7 @@
 #' @param all_sleep_dat sleep-levels dataset containing the following columns: person_id, date, start_time, level, duration, and is_main_sleep.
 #' @description finds relevant sleep logs by computing the median sleep point when is_main_sleep is TRUE and filtering out sleep logs that are outside of that interval.
 #' @noRd
-find_relevant_sleep <- function(all_sleep_dat)
+filter_relevant_sleep <- function(all_sleep_dat)
 {
     # Use the median MSP to look for all relevant sleep
     # Median MSP ± 8hrs
@@ -75,7 +75,7 @@ find_relevant_sleep <- function(all_sleep_dat)
     first_last_asleep_ranges <- first_last_asleep_ranges[!duplicated(first_last_asleep_ranges)]
     # Find all overlapping sleep logs within +/- 8 lubridate::hours of the MSP
     setkey(all_sleep_dat, person_id, start_datetime_log, end_time_log)
-    dt_overlaps <- find_overlaps(all_sleep_dat,first_last_asleep_ranges,"range_begin","range_end")
+    dt_overlaps <- filter_overlaps(all_sleep_dat,first_last_asleep_ranges,"range_begin","range_end")
     dt_overlaps <- dt_overlaps[!duplicated(dt_overlaps[,c("xid")])]
     # Keep relevant sleep logs overlapping with MSP +/-8 lubridate::hours
     all_sleep_dat[, msp := FALSE]
