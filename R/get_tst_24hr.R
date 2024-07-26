@@ -2,8 +2,8 @@
 #' @param all_sleep_dat Dataset containing sleep segments. Must contain person_id, is_main_sleep, date_col, level, and start_datetime.
 #' @return dataframe with person_id, date_col, nap_count, and nap_length
 #' @noRd 
-get_tst_24hr <- function(all_sleep_date){
-    dt <- all_sleep_date[!level %in% AWAKE_LEVELS()]
+get_tst_24hr <- function(all_sleep_dat){
+    dt <- all_sleep_dat[!level %in% AWAKE_LEVELS()]
     dt[, end := start_datetime + lubridate::seconds(duration_in_min * 60)]
     dt[, start_date := lubridate::as_date(start_datetime)]
     dt[, end_date :=  lubridate::as_date(end)]

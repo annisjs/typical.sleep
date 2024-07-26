@@ -26,8 +26,6 @@
 #'   \item{wake_after_sleep_onset}{Total duration of all ‘wake’, ‘awake’ and ‘restless’ sleep segments between sleep onset and sleep offset}
 #'   \item{wake_to_end_of_log_latency}{Time difference in hours between the final awakening to wake time}
 #'   \item{sleep_efficiency}{Total time spent asleep as a proportion of the primary sleep period. 100 * total_sleep_time / time_in_bed}
-#'   \item{nap_count}{Number of sleep logs outside of primary sleep period}
-#'   \item{nap_length}{Total duration of sleep across sleep logs outside of the primary sleep period}
 #'   \item{sleep_onset_latency}{Time between bedtime and sleep onset}
 #'   \item{total_sleep_time_24h}{Total duration of sleep for a given calendar date.}
 #' }
@@ -37,11 +35,8 @@
 #'\dontrun{
 #' # If parsing from JSON format
 #' dat <- parse_fitbit_json("sleep_data.json")
-#' metrics <- compute_sleep_metrics(dat,"main_sleep")
-#' print(metrics)
-#' tsp_dat <- typical_sleep(dat)
-#' tsp_metrics <- compute_sleep_metrics(tsp_dat,"typical_sleep")
-#' print(tsp_metrics)
+#' dat_logs <- as_sleep_logs(dat)
+#' tsp_metrics <- get_sleep_metrics(dat_logs)
 #'}
 #' 
 get_sleep_metrics <- function(sleep_data) UseMethod("get_sleep_metrics",sleep_data)
@@ -50,11 +45,8 @@ get_sleep_metrics <- function(sleep_data) UseMethod("get_sleep_metrics",sleep_da
 get_sleep_metrics.sleep_logs <- function(sleep_data)
 {
   dt <- sleep_data$sleep_data
-  date_col <- "sleep_date"
-  nap_agg <- get_naps(dt,date_col,"is_main_sleep")
   dt <- dt[is_main_sleep == TRUE]
-  metrics <- get_metrics(dt,date_col)
-  metrics <- add_naps(metrics,nap_agg,date_col)
+  metrics <- get_metrics(dt,"sleep_date")
   return(metrics)
 }
 
@@ -62,24 +54,7 @@ get_sleep_metrics.sleep_logs <- function(sleep_data)
 get_sleep_metrics.typical_sleep <- function(sleep_data)
 {
   dt <- sleep_data$sleep_data
-  nap_agg <- get_naps(dt,"sleep_date","is_typical_sleep")
   dt <- dt[is_typical_sleep == TRUE]
   metrics <- get_metrics(dt,"typical_sleep_date")
-  nap_agg[, typical_sleep_date := sleep_date]
-  metrics <- add_naps(metrics,nap_agg,"typical_sleep_date")
   return(metrics)
-}
-
-#' Function for merging aggregated nap data with metrics. Not exported.
-#' @param out metric output from get_metrics
-#' @param nap_agg output from get_naps
-#' @param date_col typical_sleep_date or sleep_date
-#' @noRd
-add_naps <- function(out,nap_agg,date_col)
-{
-  # Add naps
-  out <- merge(out,nap_agg,by=c("person_id",date_col),all.x=T,all.y=T)
-  out[, nap_count := fifelse(is.na(nap_count),0,nap_count)]
-  out[, nap_length := fifelse(is.na(nap_length),0,nap_length)]
-  return(out)
 }
