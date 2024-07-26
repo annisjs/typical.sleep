@@ -20,6 +20,6 @@ get_algorithm_data <- function(sleep_data) UseMethod("get_algorithm_data",sleep_
 #' @export
 get_algorithm_data.typical_sleep <- function(sleep_data)
 {
-  dt <- sleep_data$algoritm_data
+  dt <- sleep_data$algorithm_data
   return(dt)
 }
