@@ -11,23 +11,15 @@
 #' # If parsing from JSON format
 #' dat <- parse_fitbit_json("sleep_data.json")
 #' dat_logs <- as_sleep_logs(dat)
-#' tsp_metrics <- get_nap_metrics(dat_logs)
+#' tsp <- get_typical_sleep(dat_logs)
+#' get_algorithm_data(tsp)
 #'}
 #' 
-get_nap_metrics <- function(sleep_data) UseMethod("get_nap_metrics",sleep_data)
+get_algorithm_data <- function(sleep_data) UseMethod("get_algorithm_data",sleep_data)
 
 #' @export
-get_nap_metrics.sleep_logs <- function(sleep_data)
+get_algorithm_data.typical_sleep <- function(sleep_data)
 {
-  dt <- sleep_data$sleep_data
-  metrics <- get_tst_24hr(dt,TRUE)
-  return(metrics)
-}
-
-#' @export
-get_nap_metrics.typical_sleep <- function(sleep_data)
-{
-  dt <- sleep_data$sleep_data
-  metrics <- get_naps(dt)
-  return(metrics)
+  dt <- sleep_data$algoritm_data
+  return(dt)
 }
