@@ -11,7 +11,7 @@ as_sleep_logs <- function(all_sleep_dat)
         cols_not_in <- cols[not_in]
         stop(paste0("Missing columns:",cols_not_in))
     }
-    dt <- copy(all_sleep_dat)
+    dt <- all_sleep_dat
     dt[, end_time := start_datetime + lubridate::seconds(duration_in_min * 60)]
     # If the end time overlaps the next start time, clip it and adjust the duration and start time.
     # This is rare. 
