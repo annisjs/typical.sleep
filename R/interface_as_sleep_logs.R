@@ -11,22 +11,23 @@ as_sleep_logs <- function(all_sleep_dat)
         cols_not_in <- cols[not_in]
         stop(paste0("Missing columns:",cols_not_in))
     }
-    all_sleep_dat[, end_time := start_datetime + lubridate::seconds(duration_in_min * 60)]
+    dt <- copy(all_sleep_dat)
+    dt[, end_time := start_datetime + lubridate::seconds(duration_in_min * 60)]
     # If the end time overlaps the next start time, clip it and adjust the duration and start time.
     # This is rare. 
-    setkey(all_sleep_dat, person_id, start_datetime, end_time)
-    all_sleep_dat[,start_time_lag := shift(start_datetime,-1),.(person_id)]
-    all_sleep_dat[end_time > start_time_lag, duration_in_min := as.numeric(start_time_lag - start_datetime) /60]
-    all_sleep_dat[end_time > start_time_lag, end_time := start_time_lag]
+    setkey(dt, person_id, start_datetime, end_time)
+    dt[,start_time_lag := shift(start_datetime,-1),.(person_id)]
+    dt[end_time > start_time_lag, duration_in_min := as.numeric(start_time_lag - start_datetime) /60]
+    dt[end_time > start_time_lag, end_time := start_time_lag]
     # Find sleep logs
-    all_sleep_dat[, end_datetime_lead := shift(end_time,1),.(person_id)]
-    all_sleep_dat[, diff := as.numeric(start_datetime - end_datetime_lead) / 60,.(person_id)]
-    all_sleep_dat[, sleep_log := cumsum(diff >= 1 | is.na(diff))]
-    all_sleep_dat[, start_datetime_log := start_datetime[1],.(person_id,sleep_log)]
-    all_sleep_dat[, end_time_log := end_time[.N],.(person_id,sleep_log)]
-    all_sleep_dat[, end_datetime_lead := NULL]
-    all_sleep_dat[, start_time_lag := NULL]
-    all_sleep_dat[, diff := NULL]
-    all_sleep_dat <- structure(list(sleep_data=all_sleep_dat),class="sleep_logs")
-    return(all_sleep_dat)
+    dt[, end_datetime_lead := shift(end_time,1),.(person_id)]
+    dt[, diff := as.numeric(start_datetime - end_datetime_lead) / 60,.(person_id)]
+    dt[, sleep_log := cumsum(diff >= 1 | is.na(diff))]
+    dt[, start_datetime_log := start_datetime[1],.(person_id,sleep_log)]
+    dt[, end_time_log := end_time[.N],.(person_id,sleep_log)]
+    dt[, end_datetime_lead := NULL]
+    dt[, start_time_lag := NULL]
+    dt[, diff := NULL]
+    dt <- structure(list(sleep_data=dt),class="sleep_logs")
+    return(dt)
 }

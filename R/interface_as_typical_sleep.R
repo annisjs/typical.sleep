@@ -13,7 +13,7 @@ as_typical_sleep <- function(sleep_data) UseMethod("as_typical_sleep",sleep_data
 #' @export 
 as_typical_sleep.sleep_logs <- function(sleep_data)
 {
-  dt <- sleep_data$sleep_data
+  dt <- copy(sleep_data$sleep_data)
   dt <- filter_relevant_sleep(dt)
   dt <- filter_tsp(dt)
   # Return column names to original
