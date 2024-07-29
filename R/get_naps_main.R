@@ -10,13 +10,13 @@ get_naps_main <- function(all_sleep_dat){
     dt[, end_date :=  lubridate::as_date(end)]
     dt[, start_datetime_temp := lubridate::as_datetime(paste0(start_date," 23:59:59"))]
     dt[, end_datetime_temp := lubridate::as_datetime(paste0(end_date," 00:00:00"))]
-    d1 <- dt[start_date == end_date, .(duration = duration_in_min,
+    d1 <- dt[start_date == end_date, .(duration = sum(duration_in_min),
                                        n_logs = length(unique(sleep_log))),
                                        .(start_date,person_id)]
-    d2 <- dt[start_date != end_date, .(duration =  as.numeric(start_datetime_temp - start_datetime) / 60,
+    d2 <- dt[start_date != end_date, .(duration = sum(as.numeric(start_datetime_temp - start_datetime) / 60),
                                        n_logs = length(unique(sleep_log))),
                                        .(start_date,person_id)]
-    d3 <- dt[start_date != end_date, .(duration = as.numeric(end - end_datetime_temp) / 60,
+    d3 <- dt[start_date != end_date, .(duration = sum(as.numeric(end - end_datetime_temp) / 60),
                                        n_logs = length(unique(sleep_log))),
                                        .(end_date,person_id)]
     colnames(d3)[1] <- "start_date"
