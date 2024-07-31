@@ -34,6 +34,7 @@ get_metrics <- function(sleep_data,date_col)
   
   awake_agg <- sleep_data[,
   .(
+    n_logs = length(unique(sleep_log)),
     imputed_awake_duration = fifelse(any(level=="imputed_awake"),sum(duration_in_min[level=="imputed_awake"]),as.double(NA)),
     awake_duration = fifelse(any(level=="awake"),sum(duration_in_min[level=="awake"]),as.double(NA)),
     wake_duration = fifelse(any(level=="wake"),sum(duration_in_min[level=="wake"]),as.double(NA)),
