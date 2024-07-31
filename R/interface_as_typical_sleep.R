@@ -13,7 +13,7 @@ as_typical_sleep <- function(sleep_data) UseMethod("as_typical_sleep",sleep_data
 #' @export 
 as_typical_sleep.sleep_logs <- function(sleep_data)
 {
-  dt <- copy(sleep_data$sleep_data)
+  dt <- sleep_data$sleep_data
   dt <- filter_relevant_sleep(dt)
   dt <- filter_tsp(dt)
   # Return column names to original
@@ -22,9 +22,9 @@ as_typical_sleep.sleep_logs <- function(sleep_data)
   setnames(dt,"date_nap","nap_date")
   algo_data <- dt[,c("person_id","median_msp","median_sleep_start","median_sleep_end","bt_wt_by_msp","bedtime_gt_waketime")]
   algo_data <- algo_data[!duplicated(algo_data)]
-  algo_data[, median_msp := hms::as_hms(median_msp)]
-  algo_data[, median_sleep_start := hms::as_hms(median_sleep_start)]
-  algo_data[, median_sleep_end := hms::as_hms(median_sleep_end)]
+  algo_data[, median_msp := as.character(hms::as_hms(median_msp))]
+  algo_data[, median_sleep_start := as.character(hms::as_hms(median_sleep_start))]
+  algo_data[, median_sleep_end := as.character(hms::as_hms(median_sleep_end))]
   dt <- dt[,c("person_id","sleep_date","start_datetime","level","duration_in_min",
               "is_main_sleep","sleep_log","start_datetime_log","end_time_log","typical_sleep_date","is_typical_sleep",
               "nap_date","is_nap")]
