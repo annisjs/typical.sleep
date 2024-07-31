@@ -24,5 +24,6 @@ get_naps_main <- function(all_sleep_dat){
     nap_agg <- d4[,.(nap_count = sum(n_logs),
                      nap_length = sum(duration)),
                     by=c("person_id","start_date")]
+    colnames(nap_agg)[2] <- "nap_date"
     return(nap_agg)
 }
