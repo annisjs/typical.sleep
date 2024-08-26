@@ -16,6 +16,8 @@ get_metrics <- function(sleep_data,date_col)
   .(
     sleep_onset = start_datetime[1],
     sleep_offset = end_time[.N],
+    sleep_onset_is_main_sleep = is_main_sleep[1],
+    sleep_offset_is_main_sleep = is_main_sleep[.N],
     sleep_duration = as.numeric(end_time[.N] - start_datetime[1])/60,
     midsleep_point = hms::as_hms(uncenter(((sleep_start_new[1] + sleep_end_new[.N]) / 2)) * 60),
     total_sleep_time = sum(duration_in_min),
@@ -28,7 +30,26 @@ get_metrics <- function(sleep_data,date_col)
     pct_light = fifelse(any(level=="light"),100*sum(duration_in_min[level=="light"])/sum(duration_in_min),as.double(NA))
    ),
   by=c("person_id",date_col)]
-  
+
+  contains_is_typical_sleep <- "is_typical_sleep" %in% colnames(sleep_data) 
+  if (contains_is_typical_sleep)
+  { 
+    tmp <- sleep_data[!level %in% AWAKE_LEVELS(),
+    .(
+        sleep_onset_is_typical_sleep = is_typical_sleep[1],
+        sleep_offset_is_typical_sleep = is_typical_sleep[.N]
+    ),
+    by=c("person_id",date_col)]
+    sleep_agg <- merge(sleep_agg,tmp,by=c("person_id",date_col))
+  } else {
+    tmp <- sleep_data[!level %in% AWAKE_LEVELS(),
+    .(
+        sleep_onset_is_typical_sleep = as.logical(NA),
+        sleep_offset_is_typical_sleep = as.logical(NA)
+    ),
+    by=c("person_id",date_col)]
+    sleep_agg <- merge(sleep_agg,tmp,by=c("person_id",date_col))
+  }
   # Need sleep offset in sleep_data
   sleep_data <- merge(sleep_data,sleep_agg[,.SD,.SDcols=c("person_id",date_col,"sleep_offset")],by=c("person_id",date_col))
   

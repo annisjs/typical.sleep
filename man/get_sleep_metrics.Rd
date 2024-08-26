@@ -15,6 +15,10 @@ A dataframe with the following columns (by person_id and date):
   \item{n_logs}{Number of unique sleep logs on given date.}
   \item{sleep_onset}{The start datetime of the first sleep segment, where sleep segment levels are not wake, awake, or restless.}
   \item{sleep_offset}{The end datetime of the last sleep segment, where sleep segment levels are not wake, awake, or restless. The end datetime is computed by adding sleep duration to start_datetime.}
+  \item{sleep_offset_is_main_sleep} Indicates whether the sleep log corresponding to sleep offset is part of the main sleep period.
+  \item{sleep_onset_is_main_sleep} Indicates whether the sleep log corresponding to sleep onset is part of the main sleep period.
+  \item{sleep_offset_is_typical_sleep} Indicates whether the sleep log corresponding to sleep offset is part of the typical sleep period.
+  \item{sleep_onset_is_typical_sleep} Indicates whether the sleep log corresponding to sleep onset is part of the typical sleep period.
   \item{sleep_duration}{Duration of sleep in minutes. (sleep offset - sleep onset) / 60}
   \item{midsleep_point}{Midpoint between sleep_onset and sleep_offset. (sleep onset + sleep offset) / 2}
   \item{total_sleep_time}{Sum of all sleep segment durations, where level is not awake, wake, or restless.}
