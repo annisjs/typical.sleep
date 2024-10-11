@@ -21,7 +21,8 @@ tsp_metrics <- get_sleep_metrics(dat)
 The package can also handle direct exports from Fitbit. 
 [How do I export my Fitbit data?](https://support.google.com/fitbit/answer/14236615?hl=en#zippy=%2Chow-do-i-export-my-fitbit-data).
 ```r
-json_test_data <- parse_fitbit_json("my-sleep-data.json")
+example_file <- example_dataset()
+json_test_data <- parse_fitbit_json(example_file)
 dat <- as_sleep_logs(json_test_data)
 dat <- find_typical_sleep(dat)
 ```
