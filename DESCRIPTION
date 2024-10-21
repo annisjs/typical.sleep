@@ -1,7 +1,7 @@
 Package: typical.sleep
 Type: Package
 Title: Finds the typical sleep period for Fitbit sleep data
-Version: 0.1.0
+Version: 1.0.0
 Author: Jeffrey Annis
 Maintainer: Jeffrey Annis <jeffrey.s.annis@vumc.org>
 Description: TODO: Describe the package
