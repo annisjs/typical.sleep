@@ -4,7 +4,8 @@
 #' @import data.table
 #' @return a typical sleep object
 #' @description The typical sleep algorithm returns a typical sleep object that contains the original data plus inserted awake levels and additioanl columns.
-#' The additional columns are the result of the typical sleep algorithm: typical_sleep_date, is_typical_sleep, median_msp, median_sleep_start, median_sleep_end 
+#' The additional columns are the result of the typical sleep algorithm: typical_sleep_date, is_typical_sleep, median_msp, median_sleep_start, median_sleep_end,
+#' hybrid_log_flag 
 #'
 #' @export
 #' @import data.table
@@ -25,9 +26,12 @@ as_typical_sleep.sleep_logs <- function(sleep_data)
   algo_data[, median_msp := as.character(hms::as_hms(median_msp))]
   algo_data[, median_sleep_start := as.character(hms::as_hms(median_sleep_start))]
   algo_data[, median_sleep_end := as.character(hms::as_hms(median_sleep_end))]
+  staged_level <- c("wake","rem","deep","light")
+  classic_level <- c("restless","awake","asleep")
+  dt[, hybrid_log_flag := any(level %in% staged_level) & any(level %in% classic_level), .(person_id,sleep_log)]
   dt <- dt[,c("person_id","sleep_date","start_datetime","level","duration_in_min",
               "is_main_sleep","sleep_log","start_datetime_log","end_time_log","typical_sleep_date","is_typical_sleep",
-              "nap_date","is_nap")]
+              "nap_date","is_nap","hybrid_log_flag")]
   dt <- structure(list(sleep_data=dt,algorithm_data=algo_data),class="typical_sleep")
   return(dt)
 }

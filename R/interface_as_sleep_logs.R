@@ -28,6 +28,9 @@ as_sleep_logs <- function(all_sleep_dat)
     dt[, end_datetime_lead := NULL]
     dt[, start_time_lag := NULL]
     dt[, diff := NULL]
+    staged_level <- c("wake","rem","deep","light")
+    classic_level <- c("restless","awake","asleep")
+    dt[, hybrid_log_flag := any(level %in% staged_level) & any(level %in% classic_level), .(person_id,sleep_log)]
     dt <- structure(list(sleep_data=dt),class="sleep_logs")
     return(dt)
 }
