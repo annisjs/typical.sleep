@@ -14,7 +14,7 @@ library(typical.sleep)
 # Assuming dat is a data.table that shares the same schema as the sleep_level table in AoU.
 dat <- as_sleep_logs(dat)
 sleep_metrics <- get_sleep_metrics(dat)
-dat <- find_typical_sleep(dat)
+dat <- as_typical_sleep(dat)
 tsp_metrics <- get_sleep_metrics(dat)
 ```
 
@@ -24,5 +24,5 @@ The package can also handle direct exports from Fitbit.
 example_file <- example_dataset()
 json_test_data <- parse_fitbit_json(example_file)
 dat <- as_sleep_logs(json_test_data)
-dat <- find_typical_sleep(dat)
+dat <- as_typical_sleep(dat)
 ```
