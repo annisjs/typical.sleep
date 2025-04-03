@@ -5,8 +5,8 @@ Version: 1.0.0
 Author: Jeffrey Annis
 Maintainer: Jeffrey Annis <jeffrey.s.annis@vumc.org>
 Description: Implements user-centric algorithm for Fitbit sleep data that accounts for variability in habitual sleep patterns. 
-Given a set of Fitbit sleep logs, the algorithm will calculate the typical sleep period for a particular individual. This period
-can then be used to more accurately compute sleep metrics.
+    Given a set of Fitbit sleep logs, the algorithm will calculate the typical sleep period for a particular individual. This period
+    can then be used to more accurately compute sleep metrics.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
