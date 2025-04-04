@@ -2,7 +2,7 @@
 % Please edit documentation in R/interface_get_algorithm_data.R
 \name{get_algorithm_data}
 \alias{get_algorithm_data}
-\title{Compute nap metrics for each person_id and date.}
+\title{Compute algorithm metrics}
 \usage{
 get_algorithm_data(sleep_data)
 }
@@ -10,22 +10,16 @@ get_algorithm_data(sleep_data)
 \item{sleep_data}{an object returned from as_sleep_logs or typical_sleep}
 }
 \value{
-A dataframe with the following columns (by person_id and date):
+A dataframe with the following columns:
 \describe{ 
- \item{nap_count}{Number of sleep logs outside of primary sleep period}
- \item{nap_length}{Total duration of sleep across sleep logs outside of the primary sleep period}
+ \item{person_id}{person ID number}
+ \item{median_msp}{Median of the median sleep period}
+ \item{median_sleep_start}{Median sleep start}
+ \item{median_sleep_end}{Median sleep end}
+ \item{bt_wt_by_msp}{Indicates whether the bedtime and waketime were determined by MSP +/- 3.5 hours. This happens when the median BT > median WT}
+ \item{bedtime_gt_waketime}{Indicates whether the median BT > median WT} 
 }
 }
 \description{
-Compute nap metrics for each person_id and date.
-}
-\examples{
-\dontrun{
-# If parsing from JSON format
-dat <- parse_fitbit_json("sleep_data.json")
-dat_logs <- as_sleep_logs(dat)
-tsp <- get_typical_sleep(dat_logs)
-get_algorithm_data(tsp)
-}
-
+Compute algorithm metrics
 }

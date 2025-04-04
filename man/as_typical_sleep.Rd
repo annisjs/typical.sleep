@@ -15,5 +15,6 @@ a typical sleep object
 }
 \description{
 The typical sleep algorithm returns a typical sleep object that contains the original data plus inserted awake levels and additioanl columns.
-The additional columns are the result of the typical sleep algorithm: typical_sleep_date, is_typical_sleep, median_msp, median_sleep_start, median_sleep_end
+The additional columns are the result of the typical sleep algorithm: typical_sleep_date, is_typical_sleep, nap_date, is_nap, and hybrid_log_flag. 
+They hybrid_log_flag indicates whether the log contained both staged sleep and classic sleep levels.
 }
