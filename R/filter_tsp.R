@@ -53,6 +53,7 @@ filter_tsp <- function(all_sleep_dat)
     colnames(fl_melt2) <- c("person_id","median_sleep_start","median_sleep_end")
     ranges <- rbindlist(list(fl_melt1,fl_melt2))
     ranges <- ranges[!duplicated(ranges)]
+    ranges[median_sleep_start > median_sleep_end, median_sleep_start := median_sleep_end]
     dt_overlaps <- filter_overlaps(all_sleep_dat,ranges,"median_sleep_start","median_sleep_end","within")
     dt_overlaps <- dt_overlaps[!duplicated(dt_overlaps[,c("xid")])]
     all_sleep_dat[, is_nap := FALSE]
